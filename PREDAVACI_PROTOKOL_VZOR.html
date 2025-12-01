@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Předávací protokol - ajtak.it</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 9px;
+            line-height: 1.3;
+            color: #fff;
+            background: #0a0a0a;
+        }
+        
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 6mm;
+            margin: 20px auto;
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, #00ff41, #00d4ff, transparent);
+        }
+        
+        @media print {
+            @page { size: A4; margin: 4mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; }
+            html, body { background: #fff !important; color: #000 !important; font-size: 8pt !important; }
+            .page { width: 100% !important; height: auto !important; padding: 2mm !important; margin: 0 !important; border: none !important; background: #fff !important; }
+            .page::before { display: none !important; }
+            .no-print, .toolbar { display: none !important; }
+            .card, .ref-box, .status-grid, .warranty-box, .confirm-box, .footer { background: #fff !important; border-color: #ccc !important; }
+            *, p, span, div, td, th, input, textarea { color: #000 !important; background-color: transparent !important; }
+            .logo span { color: #0077aa !important; }
+            .doc-title { color: #0077aa !important; }
+            .badge { background: #0077aa !important; color: #fff !important; -webkit-print-color-adjust: exact !important; }
+            .section-title { background: #f5f5f5 !important; border-left-color: #0077aa !important; color: #0077aa !important; }
+            .ref-box { background: #f8fbff !important; border-color: #0077aa !important; }
+            .warranty-box { background: #f8fff8 !important; border-color: #006622 !important; }
+            .warranty-title { color: #006622 !important; }
+            .status-box { background: #fff !important; border: 1px solid #ccc !important; }
+            .status-box.active { border: 2px solid #006622 !important; background: #f8fff8 !important; }
+            .checkbox.checked { background: #0077aa !important; border-color: #0077aa !important; }
+            .signature-line { border-color: #000 !important; }
+            .footer { border-color: #ccc !important; }
+            .footer-brand { color: #006622 !important; }
+            table th { background: #f5f5f5 !important; }
+            table td { background: #fff !important; }
+        }
+        
+        /* Toolbar */
+        .toolbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 50px;
+            background: rgba(10,10,10,0.95); border-bottom: 1px solid #2a2a2a;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 1000;
+        }
+        .toolbar-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
+        .toolbar-brand span { color: #00d4ff; }
+        .toolbar-actions { display: flex; gap: 8px; }
+        .btn { background: #111; color: #fff; border: 1px solid #2a2a2a; padding: 8px 14px; font-size: 11px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; gap: 6px; }
+        .btn:hover { border-color: #00d4ff; }
+        .btn-primary { background: #00d4ff; color: #000; border-color: #00d4ff; font-weight: 600; }
+        .btn-danger { border-color: #ff4444; color: #ff4444; }
+        .btn-danger:hover { background: #ff4444; color: #fff; }
+        
+        .main-content { padding-top: 70px; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 5px; margin-bottom: 5px; border-bottom: 1px solid #2a2a2a; }
+        .logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; }
+        .logo span { color: #00ff41; }
+        .logo-tag { font-size: 7px; color: #555; letter-spacing: 1px; }
+        .company-info { text-align: right; font-size: 7px; color: #888; line-height: 1.4; }
+        .company-info strong { color: #fff; font-size: 8px; }
+        
+        /* Doc Header */
+        .doc-header { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 6px 8px; border-radius: 4px; margin-bottom: 5px; }
+        .doc-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: #00d4ff; }
+        .badge { background: #00d4ff; color: #000; padding: 2px 8px; font-size: 7px; font-weight: 700; text-transform: uppercase; margin-left: 8px; }
+        .doc-meta { display: flex; gap: 12px; font-size: 8px; }
+        .meta-label { color: #555; }
+        .meta-value { color: #fff; background: #1a1a1a; padding: 2px 6px; border-radius: 2px; border: 1px solid #2a2a2a; min-width: 70px; display: inline-block; }
+        
+        /* Reference */
+        .ref-box { background: rgba(0,212,255,0.05); border: 1px solid #00d4ff; border-radius: 4px; padding: 5px 8px; margin-bottom: 5px; }
+        .ref-title { font-size: 8px; font-weight: 600; color: #00d4ff; margin-bottom: 4px; }
+        .ref-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .ref-label { font-size: 6px; color: #555; }
+        .ref-value { font-size: 8px; background: #1a1a1a; padding: 2px 5px; border-radius: 2px; margin-top: 1px; }
+        
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 5px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        
+        /* Section */
+        .section-title { font-family: 'JetBrains Mono', monospace; font-size: 7px; font-weight: 600; color: #00d4ff; background: linear-gradient(90deg, #111, transparent); padding: 3px 6px; border-left: 2px solid #00d4ff; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Card */
+        .card { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 6px; }
+        
+        /* Form */
+        .form-group { margin-bottom: 3px; }
+        .form-label { font-size: 6px; color: #555; margin-bottom: 1px; text-transform: uppercase; }
+        .form-input { width: 100%; padding: 4px 6px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 2px; color: #fff; font-size: 8px; }
+        .form-input:focus { outline: none; border-color: #00d4ff; }
+        .compact-row { display: flex; gap: 5px; }
+        .compact-row .form-group { flex: 1; margin-bottom: 0; }
+        
+        /* Table */
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #111; color: #00d4ff; font-size: 6px; font-weight: 500; padding: 3px 4px; text-align: left; border: 1px solid #2a2a2a; text-transform: uppercase; }
+        td { padding: 3px 4px; border: 1px solid #2a2a2a; background: #1a1a1a; font-size: 8px; }
+        
+        /* Status */
+        .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 5px; }
+        .status-box { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 5px; text-align: center; cursor: pointer; }
+        .status-box:hover { border-color: #00d4ff; }
+        .status-box.active { border-color: #00ff41; background: rgba(0,255,65,0.05); }
+        .status-icon { font-size: 14px; }
+        .status-title { font-size: 7px; font-weight: 600; margin-top: 2px; }
+        .status-desc { font-size: 6px; color: #555; }
+        
+        /* Work */
+        .work-box { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 5px; margin-bottom: 5px; }
+        .work-title { font-size: 7px; font-weight: 600; color: #00ff41; margin-bottom: 3px; }
+        
+        /* Checklist */
+        .checklist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-bottom: 5px; }
+        .check-item { display: flex; align-items: center; gap: 4px; padding: 3px 5px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 2px; cursor: pointer; font-size: 7px; }
+        .checkbox { width: 10px; height: 10px; border: 1px solid #2a2a2a; border-radius: 2px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .checkbox.checked { background: #00ff41; border-color: #00ff41; }
+        .checkbox.checked::after { content: '✓'; font-size: 7px; color: #000; }
+        
+        /* Warranty */
+        .warranty-box { background: rgba(0,255,65,0.05); border: 1px solid #00ff41; border-radius: 4px; padding: 5px; margin-bottom: 5px; }
+        .warranty-title { font-size: 8px; font-weight: 600; color: #00ff41; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+        .warranty-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .warranty-item { display: flex; justify-content: space-between; padding: 3px 5px; background: #1a1a1a; border-radius: 2px; }
+        .warranty-label { font-size: 6px; color: #888; }
+        .warranty-value { font-size: 7px; }
+        
+        /* Payment & Confirm */
+        .pay-confirm { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 5px; }
+        .pay-box, .confirm-box { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; padding: 5px; }
+        .pay-title, .confirm-title { font-size: 7px; font-weight: 600; color: #00ff41; margin-bottom: 4px; }
+        .pay-amount { font-size: 12px; font-weight: 600; text-align: center; padding: 4px; background: #1a1a1a; border-radius: 2px; margin-bottom: 4px; }
+        .pay-methods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+        .pay-method { padding: 3px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 2px; text-align: center; cursor: pointer; font-size: 6px; }
+        .pay-method.selected { border-color: #00ff41; background: rgba(0,255,65,0.1); }
+        .confirm-item { display: flex; align-items: flex-start; gap: 4px; padding: 3px; background: #1a1a1a; border-radius: 2px; margin-bottom: 2px; cursor: pointer; }
+        .confirm-item .checkbox { width: 8px; height: 8px; margin-top: 1px; }
+        .confirm-label { font-size: 6px; color: #888; line-height: 1.3; }
+        
+        /* Signatures */
+        .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 5px; }
+        .sig-box { text-align: center; }
+        .sig-label { font-size: 6px; color: #00d4ff; text-transform: uppercase; margin-bottom: 3px; }
+        .signature-line { height: 25px; border-bottom: 1px solid #2a2a2a; margin-bottom: 3px; }
+        .sig-info { font-size: 6px; color: #555; }
+        
+        /* Footer */
+        .footer { margin-top: auto; padding-top: 5px; border-top: 1px solid #2a2a2a; text-align: center; }
+        .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: #00ff41; }
+        .footer-legal { font-size: 5px; color: #555; margin-top: 2px; }
+    </style>
+</head>
+<body>
+    <div class="toolbar no-print">
+        <div class="toolbar-brand">[<span>ajtak.it</span>] Předávací protokol</div>
+        <div class="toolbar-actions">
+            <button class="btn btn-danger" onclick="if(confirm('Reset?'))location.reload()">🗑️ Reset</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Tisk</button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="page">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <div class="logo">[<span>ajtak.it</span>]</div>
+                    <div class="logo-tag">IT SLUŽBY NA MÍRU</div>
+                </div>
+                <div class="company-info">
+                    <strong>Julius Joska — ajtak.it</strong><br>
+                    IČ: ________ | DIČ: ________ | Tel: ________ | info@ajtak.it
+                </div>
+            </div>
+            
+            <!-- Doc Header -->
+            <div class="doc-header">
+                <div style="display: flex; align-items: center;">
+                    <span class="doc-title">Předávací protokol</span>
+                    <span class="badge">Vydání</span>
+                </div>
+                <div class="doc-meta">
+                    <span><span class="meta-label">Č.:</span> <span class="meta-value" contenteditable="true">PP-____</span></span>
+                    <span><span class="meta-label">Datum:</span> <span class="meta-value" contenteditable="true">__/__/20__</span></span>
+                </div>
+            </div>
+            
+            <!-- Reference -->
+            <div class="ref-box">
+                <div class="ref-title">Odkaz na servisní zakázku</div>
+                <div class="ref-grid">
+                    <div><div class="ref-label">Servisní list</div><div class="ref-value" contenteditable="true">SL-______</div></div>
+                    <div><div class="ref-label">Datum přijetí</div><div class="ref-value" contenteditable="true">__/__/20__</div></div>
+                    <div><div class="ref-label">Faktura</div><div class="ref-value" contenteditable="true">FV-______</div></div>
+                </div>
+            </div>
+            
+            <!-- Customer & Device -->
+            <div class="grid-2">
+                <div>
+                    <div class="section-title">Zákazník</div>
+                    <div class="card">
+                        <div class="form-group">
+                            <div class="form-label">Jméno / Firma</div>
+                            <input type="text" class="form-input" placeholder="Jan Novák / Firma s.r.o.">
+                        </div>
+                        <div class="compact-row">
+                            <div class="form-group"><div class="form-label">Tel</div><input type="text" class="form-input" placeholder="+420"></div>
+                            <div class="form-group"><div class="form-label">E-mail</div><input type="text" class="form-input" placeholder="@"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label">Adresa</div>
+                            <input type="text" class="form-input" placeholder="Ulice, PSČ Město">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="section-title">Zařízení</div>
+                    <table>
+                        <tr><th>Typ</th><th>Model</th><th>S/N</th><th>Přísl.</th></tr>
+                        <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Status -->
+            <div class="section-title">Stav zařízení</div>
+            <div class="status-grid">
+                <div class="status-box active" onclick="selectStatus(this)"><div class="status-icon">✅</div><div class="status-title">OPRAVENO</div><div class="status-desc">Plně funkční</div></div>
+                <div class="status-box" onclick="selectStatus(this)"><div class="status-icon">⚠️</div><div class="status-title">ČÁSTEČNĚ</div><div class="status-desc">Závady přetrvávají</div></div>
+                <div class="status-box" onclick="selectStatus(this)"><div class="status-icon">❌</div><div class="status-title">NEOPRAVITELNÉ</div><div class="status-desc">Oprava nemožná</div></div>
+                <div class="status-box" onclick="selectStatus(this)"><div class="status-icon">🚫</div><div class="status-title">ZRUŠENO</div><div class="status-desc">Zákazníkem</div></div>
+            </div>
+            
+            <!-- Work -->
+            <div class="work-box">
+                <div class="work-title">Provedené práce</div>
+                <textarea class="form-input" rows="2" placeholder="Popis provedených prací, vyměněných dílů..."></textarea>
+            </div>
+            
+            <!-- Checklist -->
+            <div class="section-title">Kontrolní seznam</div>
+            <div class="checklist">
+                <label class="check-item" onclick="toggle(this)"><span class="checkbox checked"></span>Vizuálně OK</label>
+                <label class="check-item" onclick="toggle(this)"><span class="checkbox checked"></span>Funkčnost ověřena</label>
+                <label class="check-item" onclick="toggle(this)"><span class="checkbox"></span>Přísl. kompletní</label>
+                <label class="check-item" onclick="toggle(this)"><span class="checkbox"></span>Data zachována</label>
+                <label class="check-item" onclick="toggle(this)"><span class="checkbox"></span>Zákazník poučen</label>
+                <label class="check-item" onclick="toggle(this)"><span class="checkbox"></span>Záruka vysvětlena</label>
+            </div>
+            
+            <!-- Warranty -->
+            <div class="warranty-box">
+                <div class="warranty-title">🛡️ Záruka</div>
+                <div class="warranty-grid">
+                    <div class="warranty-item"><span class="warranty-label">Práce</span><span class="warranty-value" contenteditable="true">__ měs.</span></div>
+                    <div class="warranty-item"><span class="warranty-label">Díly</span><span class="warranty-value" contenteditable="true">__ měs.</span></div>
+                    <div class="warranty-item"><span class="warranty-label">Platí do</span><span class="warranty-value" contenteditable="true">__/__/20__</span></div>
+                    <div class="warranty-item"><span class="warranty-label">Číslo</span><span class="warranty-value" contenteditable="true">ZAR-____</span></div>
+                </div>
+            </div>
+            
+            <!-- Payment & Confirmation -->
+            <div class="pay-confirm">
+                <div class="pay-box">
+                    <div class="pay-title">Úhrada</div>
+                    <div class="pay-amount" contenteditable="true">0 Kč</div>
+                    <div class="pay-methods">
+                        <div class="pay-method" onclick="selectPay(this)">Hotově</div>
+                        <div class="pay-method" onclick="selectPay(this)">Kartou</div>
+                        <div class="pay-method" onclick="selectPay(this)">Převodem</div>
+                        <div class="pay-method" onclick="selectPay(this)">Faktura</div>
+                    </div>
+                </div>
+                <div class="confirm-box">
+                    <div class="confirm-title">Potvrzení zákazníka</div>
+                    <label class="confirm-item" onclick="toggle(this)"><span class="checkbox checked"></span><span class="confirm-label">Přebírám zařízení ve stavu odpovídajícím opravě.</span></label>
+                    <label class="confirm-item" onclick="toggle(this)"><span class="checkbox checked"></span><span class="confirm-label">Seznámen/a se záručními podmínkami.</span></label>
+                    <label class="confirm-item" onclick="toggle(this)"><span class="checkbox"></span><span class="confirm-label">Obdržel/a jsem daňový doklad.</span></label>
+                </div>
+            </div>
+            
+            <!-- Notes -->
+            <div class="form-group" style="margin-bottom: 5px;">
+                <div class="form-label">Poznámky</div>
+                <input type="text" class="form-input" placeholder="Dodatečné poznámky...">
+            </div>
+            
+            <!-- Signatures -->
+            <div class="signatures">
+                <div class="sig-box">
+                    <div class="sig-label">Předávající (Zhotovitel)</div>
+                    <div class="signature-line"></div>
+                    <div class="sig-info">Jméno: ______________ | Datum: ________</div>
+                </div>
+                <div class="sig-box">
+                    <div class="sig-label">Přebírající (Zákazník)</div>
+                    <div class="signature-line"></div>
+                    <div class="sig-info">Jméno: ______________ | Datum: ________</div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-brand">[ajtak.it] — IT služby na míru</div>
+                <div class="footer-legal">Protokol potvrzuje předání zařízení ze servisu. V případě reklamace předložte s daňovým dokladem.</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggle(el) { el.querySelector('.checkbox').classList.toggle('checked'); }
+        function selectStatus(el) { document.querySelectorAll('.status-box').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+        function selectPay(el) { document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected')); el.classList.add('selected'); }
+    </script>
+</body>
+</html>

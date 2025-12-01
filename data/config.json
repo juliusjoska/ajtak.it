@@ -1,0 +1,130 @@
+{
+  "site": {
+    "name": "ajtak.it",
+    "title": "ajtak.it // IT služby na míru",
+    "description": "Profesionální IT služby pro firmy i domácnosti. Opravy, správa infrastruktury, vývoj aplikací, M365 & Azure.",
+    "author": "Julius Joska",
+    "email": "info@ajtak.it",
+    "phone": "na vyžádání",
+    "year": 2024
+  },
+  "location": {
+    "city": "Příbram",
+    "country": "Česká republika",
+    "coordinates": {
+      "lat": "49.6893",
+      "lng": "14.0101"
+    }
+  },
+  "social": {
+    "github": "https://github.com/juliusjoska",
+    "linkedin": "https://www.linkedin.com/in/julius-joska/"
+  },
+  "hero": {
+    "roles": [
+      "Opravy PC & notebooků",
+      "Sítě & WiFi instalace",
+      "Kamerové systémy",
+      "Microsoft 365 & Azure",
+      "Firemní IT podpora",
+      "Vývoj na míru",
+      "Kybernetická bezpečnost",
+      "Váš osobní ajťák"
+    ],
+    "description": [
+      "IT služby na míru pro firmy i domácnosti.",
+      "Od oprav zařízení po komplexní firemní infrastrukturu.",
+      "Vyvíjím, spravuji, zabezpečuji, automatizuji."
+    ],
+    "status": "AVAILABLE"
+  },
+  "about": {
+    "name": "Julius Joska",
+    "title": "FOUNDER // ajtak.it",
+    "roles": ["IT Specialista", "Full-Stack Developer", "Microsoft Certified"],
+    "story": "Jmenuji se Julius Joska a IT je moje vášeň od 14 let, kdy jsem založil herní portál s více než 1 400 aktivními uživateli. Spravoval jsem servery, vyvíjel pluginy a budoval komunitu. Od té doby jsem prošel cestou od tvorby obsahu a grafiky, přes kybernetickou bezpečnost, až po profesionální správu IT infrastruktury a vývoj aplikací.",
+    "mission": "ajtak.it jsem založil, protože věřím, že kvalitní IT služby by měly být dostupné všem — od malých firem po domácnosti. Žádné korporátní přístupy, žádné zbytečné příplatky. Osobní přístup, rychlá reakce a řešení, které opravdu fungují.",
+    "experience": [
+      "IT specialista @ Zeman Maso-Uzeniny (vývoj, správa sítě)",
+      "Cybersecurity školení pro VirusLab (13 videí)",
+      "HW diagnostika a opravy @ CZC.cz",
+      "Vlastní homelab (Proxmox, Docker, Ubiquiti, 10Gbit)",
+      "Microsoft 365 & Azure certifikace",
+      "Práce s AI od prvních verzí GPT"
+    ],
+    "specializations": [
+      "IT_SPRAVA", "FULL_STACK", "SYSADMIN", "M365_ADMIN",
+      "AZURE", "INTUNE", "DEVOPS", "CYBERSECURITY", "NETWORKING", "HARDWARE"
+    ],
+    "stats": {
+      "yearsInIT": 6,
+      "clients": 50,
+      "certifications": 10
+    }
+  },
+  "projects": [
+    {
+      "id": "001",
+      "title": "VĚRNOSTNÍ_SYSTÉM_ZAP",
+      "year": "2024",
+      "description": "Kompletní věrnostní platforma pro síť prodejen. QR kódy pro sbírání bodů, real-time analytika, zákaznický portál a administrační rozhraní. Full-stack řešení na míru.",
+      "tech": ["React", "TypeScript", "Supabase", "Tailwind"],
+      "status": "AKTIVNÍ",
+      "featured": true
+    },
+    {
+      "id": "002",
+      "title": "FIREMNÍ_IT_INFRASTRUKTURA",
+      "year": "2024",
+      "description": "Správa kompletní IT infrastruktury pro firmu s 30+ zaměstnanci. Microsoft 365, sítě prodejen, kamerové systémy, helpdesk a průběžná podpora.",
+      "tech": ["M365", "Networking", "CCTV", "Support"],
+      "status": "PROBÍHÁ"
+    },
+    {
+      "id": "003",
+      "title": "CYBERSEC_ŠKOLENÍ",
+      "year": "2023",
+      "description": "E-learningový kurz kybernetické bezpečnosti. 13 profesionálních videí pokrývajících témata od phishingu po bezpečnost hesel s doprovodnými materiály.",
+      "tech": ["Cybersecurity", "E-learning", "Video"],
+      "status": "DOKONČENO"
+    },
+    {
+      "id": "004",
+      "title": "HOMELAB_ENTERPRISE",
+      "year": "2019+",
+      "description": "Domácí serverová infrastruktura s Proxmox, Docker kontejnery, enterprise síťové prvky Ubiquiti, 10Gbit rozvody. Testovací prostředí pro nové technologie.",
+      "tech": ["Proxmox", "Docker", "Ubiquiti", "Linux"],
+      "status": "V PROVOZU"
+    },
+    {
+      "id": "005",
+      "title": "KAMEROVÉ_SYSTÉMY",
+      "year": "2024",
+      "description": "Instalace a konfigurace kamerových systémů pro firmy i domácnosti. Vzdálený přístup, NVR, nastavení nahrávání a notifikací.",
+      "tech": ["CCTV", "IP Kamery", "NVR", "Networking"],
+      "status": "PROBÍHÁ"
+    },
+    {
+      "id": "006",
+      "title": "DALŠÍ_PROJEKTY",
+      "year": "2024+",
+      "description": "Desítky dalších projektů od oprav PC, přes instalace sítí až po konzultace. Každý klient je unikátní a každé řešení je na míru.",
+      "tech": ["Rozličné", "Na míru"],
+      "status": "KONTAKT",
+      "link": "#contact"
+    }
+  ],
+  "whyUs": [
+    { "icon": "⚡", "text": "Rychlá reakce - většinou do 24h" },
+    { "icon": "💬", "text": "Mluvím česky, ne \"ajťácky\"" },
+    { "icon": "💰", "text": "Férové ceny bez skrytých poplatků" },
+    { "icon": "✅", "text": "Vše udělám napoprvé správně" },
+    { "icon": "📚", "text": "Vysvětlím, naučím, poradím" },
+    { "icon": "🔒", "text": "Diskrétnost a bezpečnost dat" }
+  ],
+  "response": {
+    "normal": "do 24 hodin",
+    "urgent": "do 4 hodin",
+    "subscription": "prioritní reakce"
+  }
+}

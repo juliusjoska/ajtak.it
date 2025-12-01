@@ -1,0 +1,220 @@
+{
+  "posts": [
+    {
+      "id": "phishing",
+      "title": "Jak poznat phishingový email",
+      "date": "2024-11-15",
+      "category": "Bezpečnost",
+      "readTime": 5,
+      "excerpt": "5 jednoduchých pravidel, jak rozpoznat podvodné emaily a chránit sebe i svou firmu před kybernetickými útoky...",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Phishingové emaily jsou stále sofistikovanější. Útočníci se snaží napodobit legitimní komunikaci od bank, e-shopů nebo vašeho zaměstnavatele. Jak je poznat?"
+        },
+        {
+          "type": "heading",
+          "text": "5 varovných signálů"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Podezřelá adresa odesílatele - zkontrolujte celou doménu, ne jen jméno",
+            "Urgentní výzvy k akci - \"Váš účet bude zablokován za 24h!\"",
+            "Gramatické chyby - profesionální firmy si hlídají kvalitu textu",
+            "Podezřelé odkazy - najeďte myší a zkontrolujte skutečnou URL",
+            "Žádost o citlivé údaje - banka nikdy nežádá heslo emailem"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Co dělat při podezření?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Nikdy neklikejte na odkazy v podezřelém emailu. Místo toho otevřete prohlížeč a přejděte na stránku přímo. V případě pochybností kontaktujte danou společnost telefonicky."
+        },
+        {
+          "type": "heading",
+          "text": "Tip na závěr"
+        },
+        {
+          "type": "paragraph",
+          "text": "Používejte dvoufaktorové ověření (2FA) všude, kde je to možné. I kdyby útočník získal vaše heslo, bez druhého faktoru se nedostane dál."
+        }
+      ]
+    },
+    {
+      "id": "ssd-vs-hdd",
+      "title": "Proč je SSD lepší než HDD",
+      "date": "2024-11-08",
+      "category": "Hardware",
+      "readTime": 4,
+      "excerpt": "Starý počítač nemusí být na vyhození. Často stačí vyměnit disk za SSD a výkon se dramaticky zvýší...",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Máte pomalý počítač? Než utratíte peníze za nový, zkuste jednu věc: vyměňte starý HDD za SSD. Rozdíl je dramatický."
+        },
+        {
+          "type": "heading",
+          "text": "Rychlost"
+        },
+        {
+          "type": "paragraph",
+          "text": "HDD disk čte data rychlostí cca 100 MB/s. Běžný SATA SSD dosahuje 500 MB/s, NVMe SSD až 3500 MB/s nebo více. Windows se spustí za 10-15 sekund místo minuty."
+        },
+        {
+          "type": "heading",
+          "text": "Spolehlivost"
+        },
+        {
+          "type": "list",
+          "items": [
+            "SSD nemá pohyblivé části - menší riziko poruchy",
+            "Odolnější vůči nárazům a vibracím",
+            "Tichý provoz - žádné \"klapání\" disku"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Kdy se vyplatí upgrade?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Prakticky vždy, když máte počítač starší než 3 roky s HDD. Cena 500GB SSD je dnes kolem 1000 Kč, což je zlomek ceny nového PC."
+        },
+        {
+          "type": "heading",
+          "text": "Jak na to?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Mohu vám disk vyměnit včetně přenosu všech dat a systému. Celý proces trvá cca 2 hodiny a vy dostanete zpět \"nový\" počítač."
+        }
+      ]
+    },
+    {
+      "id": "wifi-mesh",
+      "title": "WiFi mesh vs. zesilovač signálu",
+      "date": "2024-11-01",
+      "category": "Sítě",
+      "readTime": 6,
+      "excerpt": "Máte slabý WiFi signál v některých částech domu? Porovnání řešení a doporučení, co vybrat pro váš případ...",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Slabý WiFi signál v některých částech domu? Máte dvě hlavní možnosti: WiFi zesilovač (repeater) nebo mesh systém. Který vybrat?"
+        },
+        {
+          "type": "heading",
+          "text": "WiFi zesilovač (repeater)"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Cena: 300-800 Kč",
+            "Zesiluje existující signál",
+            "Snižuje rychlost na polovinu",
+            "Vytváří druhou síť (např. \"MojeWiFi_EXT\")",
+            "Vhodný pro jednu problémovou místnost"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Mesh systém"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Cena: 2500-8000 Kč (2-3 jednotky)",
+            "Jednotná síť v celém domě",
+            "Bez ztráty rychlosti",
+            "Automatické přepínání mezi uzly",
+            "Ideální pro větší domy/byty"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Moje doporučení"
+        },
+        {
+          "type": "paragraph",
+          "text": "Pro byt do 80m² často stačí lepší router nebo jeden repeater. Pro rodinný dům nebo vícepodlažní byt jednoznačně mesh systém - Ubiquiti, TP-Link Deco nebo Asus ZenWiFi."
+        },
+        {
+          "type": "heading",
+          "text": "Potřebujete poradit?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Rád vám pomohu vybrat správné řešení pro váš prostor. Konzultace je zdarma."
+        }
+      ]
+    },
+    {
+      "id": "windows11",
+      "title": "Windows 11 - stojí za upgrade?",
+      "date": "2024-10-25",
+      "category": "Tipy",
+      "readTime": 7,
+      "excerpt": "Praktické zkušenosti s Windows 11, jeho výhody, nevýhody a pro koho dává smysl přejít z Windows 10...",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Windows 10 končí podporu v říjnu 2025. Je čas přejít na Windows 11? Záleží na situaci."
+        },
+        {
+          "type": "heading",
+          "text": "Co Windows 11 přináší"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Modernější vzhled s centrovaným hlavním panelem",
+            "Lepší práce s více okny (Snap layouts)",
+            "Integrace Microsoft Teams",
+            "Lepší výkon na novém hardware",
+            "Android aplikace (omezená podpora)"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Kdy upgradovat"
+        },
+        {
+          "type": "paragraph",
+          "text": "Pokud máte počítač s procesorem Intel 8. generace nebo novější (AMD Ryzen 2000+), TPM 2.0 a Secure Boot, upgrade je bezproblémový."
+        },
+        {
+          "type": "heading",
+          "text": "Kdy zůstat na Windows 10"
+        },
+        {
+          "type": "list",
+          "items": [
+            "Starší hardware nesplňující požadavky",
+            "Specializovaný software bez podpory W11",
+            "Funkční systém, který nepotřebuje změnu"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Alternativa"
+        },
+        {
+          "type": "paragraph",
+          "text": "Pokud váš počítač nepodporuje Windows 11, zvažte Linux (např. Linux Mint) - je zdarma, bezpečný a pro běžnou práci plně dostačující."
+        },
+        {
+          "type": "heading",
+          "text": "Potřebujete pomoct s přechodem?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Provedu upgrade včetně zálohy dat a kontroly kompatibility. Cena od 990 Kč."
+        }
+      ]
+    }
+  ]
+}

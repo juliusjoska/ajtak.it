@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulačka - ajtak.it Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-green-dark: #00cc33;
+            --matrix-green-glow: rgba(0, 255, 65, 0.3);
+            --cyan: #00d4ff;
+            --purple: #9945ff;
+            --orange: #ff9500;
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --bg-input: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --border-color: #2a2a2a;
+            --danger: #ff4444;
+            --success: #00ff41;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--matrix-green);
+        }
+        
+        .page-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            color: var(--cyan);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: var(--matrix-green);
+            color: var(--bg-dark);
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 20px var(--matrix-green-glow);
+        }
+        
+        .btn-secondary {
+            background: var(--cyan);
+            color: var(--bg-dark);
+        }
+        
+        .btn-purple {
+            background: var(--purple);
+            color: white;
+        }
+        
+        .btn-orange {
+            background: var(--orange);
+            color: var(--bg-dark);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--matrix-green);
+            color: var(--matrix-green);
+        }
+        
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            gap: 20px;
+        }
+        
+        /* Panels */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 15px 20px;
+            background: var(--bg-input);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--matrix-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .panel-body {
+            padding: 15px;
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+        }
+        
+        /* Ceník Categories */
+        .category {
+            margin-bottom: 20px;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-input);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .category-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        
+        .category-toggle {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        .category-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .price-item:hover {
+            border-color: var(--matrix-green);
+            background: rgba(0, 255, 65, 0.05);
+        }
+        
+        .price-item-name {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        .price-item-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--matrix-green);
+            font-weight: 600;
+        }
+        
+        /* Kalkulace Panel */
+        .calc-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 200px;
+        }
+        
+        .calc-item {
+            display: grid;
+            grid-template-columns: 1fr 80px 100px 100px 30px;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .calc-item-name {
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+        
+        .calc-input {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 10px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-align: center;
+        }
+        
+        .calc-input:focus {
+            outline: none;
+            border-color: var(--matrix-green);
+        }
+        
+        .calc-item-total {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--matrix-green);
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .calc-item-remove {
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .calc-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        .calc-empty-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+        
+        /* Totals */
+        .totals-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+        
+        .total-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .total-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        
+        .total-row.grand {
+            padding: 15px;
+            background: var(--matrix-green);
+            margin: 15px -15px -15px;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .total-row.grand .total-label {
+            color: var(--bg-dark);
+            font-weight: 600;
+        }
+        
+        .total-row.grand .total-value {
+            color: var(--bg-dark);
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        /* Customer Panel */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .form-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        /* Customer Search */
+        .customer-search {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .customer-search-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px 15px 12px 40px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+        
+        .customer-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        .customer-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        
+        .customer-results.active {
+            display: block;
+        }
+        
+        .customer-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+        
+        .customer-result-item:hover {
+            background: rgba(0, 255, 65, 0.05);
+        }
+        
+        .customer-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .customer-result-name {
+            font-size: 12px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .customer-result-email {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        /* Export Actions */
+        .export-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .export-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .export-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .export-btn {
+            width: 100%;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* Quick Add */
+        .quick-add {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .quick-add-input {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+        
+        .quick-add-price {
+            width: 100px;
+        }
+        
+        /* Saved Calculations */
+        .saved-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .saved-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .saved-item:hover {
+            border-color: var(--cyan);
+        }
+        
+        .saved-item-info {
+            flex: 1;
+        }
+        
+        .saved-item-name {
+            font-size: 12px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .saved-item-date {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        .saved-item-total {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--matrix-green);
+            font-weight: 600;
+        }
+        
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+        
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast-icon {
+            font-size: 20px;
+        }
+        
+        .toast-message {
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .panel-body {
+                max-height: none;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <a href="index.html" class="logo">[<span>ajtak.it</span>]</a>
+                <span class="page-title">// Kalkulačka</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="clearCalc()">🗑️ Vyčistit</button>
+                <button class="btn btn-outline" onclick="saveCalc()">💾 Uložit</button>
+                <a href="index.html" class="btn btn-outline">← Dashboard</a>
+            </div>
+        </div>
+        
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Ceník Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">📋 Ceník služeb</span>
+                </div>
+                <div class="panel-body" id="priceList">
+                    <!-- Práce -->
+                    <div class="category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <span class="category-title">⏱️ Práce</span>
+                            <span class="category-toggle">▼</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="price-item" onclick="addItem('Diagnostika', 600, 'hod')">
+                                <span class="price-item-name">Diagnostika</span>
+                                <span class="price-item-price">600 Kč/hod</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Běžná práce', 850, 'hod')">
+                                <span class="price-item-name">Běžná práce</span>
+                                <span class="price-item-price">850 Kč/hod</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Pokročilá práce', 1100, 'hod')">
+                                <span class="price-item-name">Pokročilá práce (sítě, servery)</span>
+                                <span class="price-item-price">1 100 Kč/hod</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Konzultace', 1000, 'hod')">
+                                <span class="price-item-name">Konzultace</span>
+                                <span class="price-item-price">1 000 Kč/hod</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Urgentní zásah 24/7', 1800, 'hod')">
+                                <span class="price-item-name">Urgentní zásah 24/7</span>
+                                <span class="price-item-price">1 800 Kč/hod</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Opravy -->
+                    <div class="category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <span class="category-title">🔧 Opravy & Servis</span>
+                            <span class="category-toggle">▼</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="price-item" onclick="addItem('Čištění PC/notebooku', 800, 'ks')">
+                                <span class="price-item-name">Čištění PC/notebooku</span>
+                                <span class="price-item-price">800 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Výměna termopasty', 500, 'ks')">
+                                <span class="price-item-name">Výměna termopasty</span>
+                                <span class="price-item-price">500 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Instalace OS Windows', 990, 'ks')">
+                                <span class="price-item-name">Instalace OS Windows</span>
+                                <span class="price-item-price">990 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Záchrana dat', 1500, 'ks')">
+                                <span class="price-item-name">Záchrana dat (základní)</span>
+                                <span class="price-item-price">od 1 500 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Odstranění virů', 990, 'ks')">
+                                <span class="price-item-name">Odstranění virů/malware</span>
+                                <span class="price-item-price">990 Kč</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sítě -->
+                    <div class="category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <span class="category-title">📡 Sítě & WiFi</span>
+                            <span class="category-toggle">▼</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="price-item" onclick="addItem('Konfigurace routeru', 500, 'ks')">
+                                <span class="price-item-name">Konfigurace routeru</span>
+                                <span class="price-item-price">500 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Instalace WiFi AP', 800, 'ks')">
+                                <span class="price-item-name">Instalace WiFi AP</span>
+                                <span class="price-item-price">800 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Instalace mesh systému', 1500, 'ks')">
+                                <span class="price-item-name">Instalace mesh systému</span>
+                                <span class="price-item-price">1 500 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Konfigurace VPN', 990, 'ks')">
+                                <span class="price-item-name">Konfigurace VPN</span>
+                                <span class="price-item-price">990 Kč</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Kamery -->
+                    <div class="category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <span class="category-title">📹 Kamery & Dohled</span>
+                            <span class="category-toggle">▼</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="price-item" onclick="addItem('Instalace IP kamery', 800, 'ks')">
+                                <span class="price-item-name">Instalace IP kamery</span>
+                                <span class="price-item-price">800 Kč/ks</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Konfigurace NVR', 1200, 'ks')">
+                                <span class="price-item-name">Konfigurace NVR</span>
+                                <span class="price-item-price">1 200 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Návrh kamerového systému', 1500, 'ks')">
+                                <span class="price-item-name">Návrh kamerového systému</span>
+                                <span class="price-item-price">1 500 Kč</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Doprava -->
+                    <div class="category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <span class="category-title">🚗 Doprava</span>
+                            <span class="category-toggle">▼</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="price-item" onclick="addItem('Výjezd (do 15 km)', 0, 'ks')">
+                                <span class="price-item-name">Příbram a okolí (do 15 km)</span>
+                                <span class="price-item-price">ZDARMA</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Výjezd (15-40 km)', 300, 'ks')">
+                                <span class="price-item-name">15-40 km (Praha)</span>
+                                <span class="price-item-price">300 Kč</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Výjezd (nad 40 km)', 9, 'km')">
+                                <span class="price-item-name">Nad 40 km</span>
+                                <span class="price-item-price">9 Kč/km</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Paušály -->
+                    <div class="category">
+                        <div class="category-header" onclick="toggleCategory(this)">
+                            <span class="category-title">📊 Paušály</span>
+                            <span class="category-toggle">▼</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="price-item" onclick="addItem('Paušál MINI (do 5 zařízení)', 2990, 'měs')">
+                                <span class="price-item-name">MINI (do 5 zařízení)</span>
+                                <span class="price-item-price">2 990 Kč/měs</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Paušál STANDARD (do 15 zařízení)', 5490, 'měs')">
+                                <span class="price-item-name">STANDARD (do 15 zařízení)</span>
+                                <span class="price-item-price">5 490 Kč/měs</span>
+                            </div>
+                            <div class="price-item" onclick="addItem('Paušál PREMIUM (15+ zařízení)', 8990, 'měs')">
+                                <span class="price-item-name">PREMIUM (15+ zařízení)</span>
+                                <span class="price-item-price">8 990 Kč/měs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kalkulace Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">🧮 Kalkulace</span>
+                    <span style="font-size: 11px; color: var(--text-muted);" id="itemCount">0 položek</span>
+                </div>
+                <div class="panel-body">
+                    <!-- Quick Add -->
+                    <div class="quick-add">
+                        <input type="text" class="quick-add-input" id="quickName" placeholder="Vlastní položka...">
+                        <input type="number" class="quick-add-input quick-add-price" id="quickPrice" placeholder="Cena">
+                        <button class="btn btn-primary" onclick="addCustomItem()">+</button>
+                    </div>
+                    
+                    <!-- Items -->
+                    <div class="calc-items" id="calcItems">
+                        <div class="calc-empty">
+                            <div class="calc-empty-icon">📝</div>
+                            <div>Klikněte na položku v ceníku<br>nebo přidejte vlastní</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Totals -->
+                    <div class="totals-section">
+                        <div class="total-row">
+                            <span class="total-label">Mezisoučet</span>
+                            <span class="total-value" id="subtotal">0 Kč</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="total-label">DPH 21%</span>
+                            <span class="total-value" id="vat">0 Kč</span>
+                        </div>
+                        <div class="total-row grand">
+                            <span class="total-label">Celkem s DPH</span>
+                            <span class="total-value" id="total">0 Kč</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Zákazník & Export Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">👤 Zákazník & Export</span>
+                </div>
+                <div class="panel-body">
+                    <!-- Customer Search -->
+                    <div class="customer-search">
+                        <span class="customer-search-icon">🔍</span>
+                        <input type="text" class="customer-search-input" id="customerSearch" placeholder="Vyhledat zákazníka..." oninput="searchCustomer(this.value)">
+                        <div class="customer-results" id="customerResults"></div>
+                    </div>
+                    
+                    <!-- Customer Form -->
+                    <div class="form-group">
+                        <label class="form-label">Jméno / Firma</label>
+                        <input type="text" class="form-input" id="custName" placeholder="Jan Novák">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-input" id="custEmail" placeholder="jan@email.cz">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telefon</label>
+                        <input type="tel" class="form-input" id="custPhone" placeholder="+420 xxx xxx xxx">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">IČ</label>
+                            <input type="text" class="form-input" id="custIco" placeholder="12345678">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">DIČ</label>
+                            <input type="text" class="form-input" id="custDic" placeholder="CZ12345678">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Adresa</label>
+                        <input type="text" class="form-input" id="custAddress" placeholder="Ulice 123, Praha">
+                    </div>
+                    
+                    <!-- Export Section -->
+                    <div class="export-section">
+                        <div class="export-title">Exportovat do dokumentu</div>
+                        <div class="export-buttons">
+                            <button class="btn btn-primary export-btn" onclick="exportTo('faktura')">
+                                📄 Vytvořit fakturu
+                            </button>
+                            <button class="btn btn-secondary export-btn" onclick="exportTo('servisni-list')">
+                                🔧 Vytvořit servisní list
+                            </button>
+                            <button class="btn btn-purple export-btn" onclick="exportTo('nabidka')">
+                                💰 Vytvořit cenovou nabídku
+                            </button>
+                            <button class="btn btn-orange export-btn" onclick="exportTo('email')">
+                                ✉️ Odeslat emailem
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Saved Calculations -->
+                    <div class="export-section">
+                        <div class="export-title">Uložené kalkulace</div>
+                        <div class="saved-list" id="savedList">
+                            <div style="text-align: center; color: var(--text-muted); font-size: 11px; padding: 20px;">
+                                Žádné uložené kalkulace
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script>
+        // Data
+        let calcItems = [];
+        let customers = [
+            { id: 1, name: 'Jan Novák', email: 'jan@novak.cz', phone: '+420 777 123 456', ico: '12345678', dic: 'CZ12345678', address: 'Ulice 1, Praha' },
+            { id: 2, name: 'Firma ABC s.r.o.', email: 'info@abc.cz', phone: '+420 777 987 654', ico: '87654321', dic: 'CZ87654321', address: 'Náměstí 5, Brno' },
+            { id: 3, name: 'Petr Svoboda', email: 'petr@svoboda.cz', phone: '+420 608 111 222', ico: '', dic: '', address: 'Lesní 10, Příbram' },
+        ];
+        let savedCalcs = JSON.parse(localStorage.getItem('ajtak_saved_calcs') || '[]');
+        
+        // Toggle category
+        function toggleCategory(header) {
+            const items = header.nextElementSibling;
+            const toggle = header.querySelector('.category-toggle');
+            
+            if (items.style.display === 'none') {
+                items.style.display = 'flex';
+                toggle.textContent = '▼';
+            } else {
+                items.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+        
+        // Add item from price list
+        function addItem(name, price, unit) {
+            calcItems.push({
+                id: Date.now(),
+                name: name,
+                qty: 1,
+                unit: unit,
+                price: price
+            });
+            renderCalcItems();
+            showToast(`Přidáno: ${name}`);
+        }
+        
+        // Add custom item
+        function addCustomItem() {
+            const name = document.getElementById('quickName').value;
+            const price = parseFloat(document.getElementById('quickPrice').value) || 0;
+            
+            if (!name) {
+                showToast('Zadejte název položky', 'error');
+                return;
+            }
+            
+            addItem(name, price, 'ks');
+            document.getElementById('quickName').value = '';
+            document.getElementById('quickPrice').value = '';
+        }
+        
+        // Remove item
+        function removeItem(id) {
+            calcItems = calcItems.filter(item => item.id !== id);
+            renderCalcItems();
+        }
+        
+        // Update quantity
+        function updateQty(id, qty) {
+            const item = calcItems.find(i => i.id === id);
+            if (item) {
+                item.qty = parseFloat(qty) || 0;
+                renderCalcItems();
+            }
+        }
+        
+        // Update price
+        function updatePrice(id, price) {
+            const item = calcItems.find(i => i.id === id);
+            if (item) {
+                item.price = parseFloat(price) || 0;
+                renderCalcItems();
+            }
+        }
+        
+        // Render calculation items
+        function renderCalcItems() {
+            const container = document.getElementById('calcItems');
+            
+            if (calcItems.length === 0) {
+                container.innerHTML = `
+                    <div class="calc-empty">
+                        <div class="calc-empty-icon">📝</div>
+                        <div>Klikněte na položku v ceníku<br>nebo přidejte vlastní</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = calcItems.map(item => `
+                    <div class="calc-item">
+                        <div class="calc-item-name">${item.name}</div>
+                        <input type="number" class="calc-input" value="${item.qty}" min="0" step="0.5" onchange="updateQty(${item.id}, this.value)">
+                        <input type="number" class="calc-input" value="${item.price}" min="0" onchange="updatePrice(${item.id}, this.value)">
+                        <div class="calc-item-total">${formatCurrency(item.qty * item.price)}</div>
+                        <button class="calc-item-remove" onclick="removeItem(${item.id})">×</button>
+                    </div>
+                `).join('');
+            }
+            
+            updateTotals();
+        }
+        
+        // Update totals
+        function updateTotals() {
+            const subtotal = calcItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
+            const vat = subtotal * 0.21;
+            const total = subtotal + vat;
+            
+            document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('vat').textContent = formatCurrency(vat);
+            document.getElementById('total').textContent = formatCurrency(total);
+            document.getElementById('itemCount').textContent = `${calcItems.length} položek`;
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return amount.toLocaleString('cs-CZ', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' Kč';
+        }
+        
+        // Clear calculation
+        function clearCalc() {
+            if (confirm('Opravdu vymazat všechny položky?')) {
+                calcItems = [];
+                renderCalcItems();
+                showToast('Kalkulace vymazána');
+            }
+        }
+        
+        // Save calculation
+        function saveCalc() {
+            const name = document.getElementById('custName').value || 'Bez názvu';
+            const saved = {
+                id: Date.now(),
+                name: name,
+                date: new Date().toLocaleDateString('cs-CZ'),
+                items: [...calcItems],
+                customer: getCustomerData(),
+                total: calcItems.reduce((sum, item) => sum + (item.qty * item.price), 0)
+            };
+            
+            savedCalcs.unshift(saved);
+            if (savedCalcs.length > 20) savedCalcs.pop(); // Keep last 20
+            localStorage.setItem('ajtak_saved_calcs', JSON.stringify(savedCalcs));
+            renderSavedCalcs();
+            showToast('Kalkulace uložena');
+        }
+        
+        // Load saved calculation
+        function loadCalc(id) {
+            const saved = savedCalcs.find(c => c.id === id);
+            if (saved) {
+                calcItems = [...saved.items];
+                if (saved.customer) {
+                    setCustomerData(saved.customer);
+                }
+                renderCalcItems();
+                showToast('Kalkulace načtena');
+            }
+        }
+        
+        // Render saved calculations
+        function renderSavedCalcs() {
+            const container = document.getElementById('savedList');
+            
+            if (savedCalcs.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); font-size: 11px; padding: 20px;">
+                        Žádné uložené kalkulace
+                    </div>
+                `;
+            } else {
+                container.innerHTML = savedCalcs.slice(0, 5).map(calc => `
+                    <div class="saved-item" onclick="loadCalc(${calc.id})">
+                        <div class="saved-item-info">
+                            <div class="saved-item-name">${calc.name}</div>
+                            <div class="saved-item-date">${calc.date}</div>
+                        </div>
+                        <div class="saved-item-total">${formatCurrency(calc.total)}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Customer search
+        function searchCustomer(query) {
+            const results = document.getElementById('customerResults');
+            
+            if (query.length < 2) {
+                results.classList.remove('active');
+                return;
+            }
+            
+            const filtered = customers.filter(c => 
+                c.name.toLowerCase().includes(query.toLowerCase()) ||
+                c.email.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filtered.length > 0) {
+                results.innerHTML = filtered.map(c => `
+                    <div class="customer-result-item" onclick="selectCustomer(${c.id})">
+                        <div class="customer-result-name">${c.name}</div>
+                        <div class="customer-result-email">${c.email}</div>
+                    </div>
+                `).join('');
+                results.classList.add('active');
+            } else {
+                results.classList.remove('active');
+            }
+        }
+        
+        // Select customer
+        function selectCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (customer) {
+                setCustomerData(customer);
+                document.getElementById('customerResults').classList.remove('active');
+                document.getElementById('customerSearch').value = '';
+            }
+        }
+        
+        // Get customer data
+        function getCustomerData() {
+            return {
+                name: document.getElementById('custName').value,
+                email: document.getElementById('custEmail').value,
+                phone: document.getElementById('custPhone').value,
+                ico: document.getElementById('custIco').value,
+                dic: document.getElementById('custDic').value,
+                address: document.getElementById('custAddress').value
+            };
+        }
+        
+        // Set customer data
+        function setCustomerData(data) {
+            document.getElementById('custName').value = data.name || '';
+            document.getElementById('custEmail').value = data.email || '';
+            document.getElementById('custPhone').value = data.phone || '';
+            document.getElementById('custIco').value = data.ico || '';
+            document.getElementById('custDic').value = data.dic || '';
+            document.getElementById('custAddress').value = data.address || '';
+        }
+        
+        // Export to document
+        function exportTo(type) {
+            if (calcItems.length === 0) {
+                showToast('Přidejte nejdřív položky do kalkulace', 'error');
+                return;
+            }
+            
+            // Save data for export
+            const exportData = {
+                items: calcItems,
+                customer: getCustomerData(),
+                totals: {
+                    subtotal: calcItems.reduce((sum, item) => sum + (item.qty * item.price), 0),
+                    vat: calcItems.reduce((sum, item) => sum + (item.qty * item.price), 0) * 0.21
+                }
+            };
+            
+            localStorage.setItem('ajtak_export_data', JSON.stringify(exportData));
+            
+            // Redirect to appropriate document
+            switch(type) {
+                case 'faktura':
+                    window.location.href = 'index.html?doc=faktura&import=true';
+                    break;
+                case 'servisni-list':
+                    window.location.href = 'index.html?doc=servisni-list&import=true';
+                    break;
+                case 'nabidka':
+                    window.location.href = 'index.html?doc=cenova-nabidka&import=true';
+                    break;
+                case 'email':
+                    sendEmail();
+                    break;
+            }
+        }
+        
+        // Send email
+        function sendEmail() {
+            const customer = getCustomerData();
+            const subtotal = calcItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
+            const total = subtotal * 1.21;
+            
+            let body = `Dobrý den,\n\nzasílám cenovou kalkulaci:\n\n`;
+            calcItems.forEach(item => {
+                body += `• ${item.name}: ${item.qty} × ${item.price} Kč = ${item.qty * item.price} Kč\n`;
+            });
+            body += `\n---\nCelkem bez DPH: ${formatCurrency(subtotal)}\nDPH 21%: ${formatCurrency(subtotal * 0.21)}\nCelkem s DPH: ${formatCurrency(total)}\n\nS pozdravem,\nJulius Joska\najtak.it`;
+            
+            const mailtoLink = `mailto:${customer.email}?subject=${encodeURIComponent('Cenová kalkulace - ajtak.it')}&body=${encodeURIComponent(body)}`;
+            window.open(mailtoLink);
+        }
+        
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <span class="toast-icon">${type === 'success' ? '✅' : '⚠️'}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Close customer results on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.customer-search')) {
+                document.getElementById('customerResults').classList.remove('active');
+            }
+        });
+        
+        // Initialize
+        renderCalcItems();
+        renderSavedCalcs();
+    </script>
+</body>
+</html>

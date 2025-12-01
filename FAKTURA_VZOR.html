@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faktura - ajtak.it</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-green-dark: #00cc33;
+            --matrix-green-glow: rgba(0, 255, 65, 0.3);
+            --cyan: #00d4ff;
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --bg-input: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --border-color: #2a2a2a;
+            --danger: #ff4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 10px;
+            line-height: 1.4;
+            color: var(--text-primary);
+            background: var(--bg-dark);
+        }
+        
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 8mm;
+            margin: 20px auto;
+            background: linear-gradient(145deg, #0d0d0d 0%, #0a0a0a 50%, #080808 100%);
+            box-shadow: 0 0 60px rgba(0, 255, 65, 0.1), 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--matrix-green), var(--cyan), var(--matrix-green), transparent);
+        }
+        
+        .page-content {
+            flex: 1;
+        }
+        
+        /* ==================== PRINT STYLES ==================== */
+        @media print {
+            @page {
+                size: A4;
+                margin: 5mm;
+            }
+            
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                box-shadow: none !important;
+            }
+            
+            html, body { 
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important; 
+                color: #000 !important;
+                font-size: 9pt !important;
+                width: 100% !important;
+            }
+            
+            .page { 
+                width: 100% !important;
+                max-width: 100% !important;
+                min-height: auto !important;
+                height: auto !important;
+                padding: 3mm !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: #fff !important;
+                display: block !important;
+            }
+            
+            .page::before, .page::after {
+                display: none !important;
+            }
+            
+            .no-print, .toolbar { 
+                display: none !important; 
+            }
+            
+            /* Vsechna pozadi bila */
+            .meta-box, .party-box, .payment-box, .notes-section, .totals-box,
+            .header, .invoice-meta, .parties, .totals-section, .payment-section, .footer {
+                background: #fff !important;
+                border-color: #ccc !important;
+            }
+            
+            /* Page break kontrola */
+            .invoice-table tr {
+                page-break-inside: avoid !important;
+            }
+            
+            .totals-section, .payment-section, .footer {
+                page-break-inside: avoid !important;
+            }
+            
+            /* Vsechny texty cerne */
+            *, p, span, div, td, th, label, h1, h2, h3, input {
+                color: #000 !important;
+                text-shadow: none !important;
+                background-color: transparent !important;
+            }
+            
+            .logo span { color: #006622 !important; }
+            .meta-title, .section-title, .payment-title, .notes-title, .footer-brand {
+                color: #006622 !important;
+            }
+            
+            .doc-type-badge {
+                background: #006622 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .invoice-table th {
+                background: #f5f5f5 !important;
+                color: #000 !important;
+                border: 1px solid #999 !important;
+            }
+            
+            .invoice-table td {
+                background: #fff !important;
+                color: #000 !important;
+                border: 1px solid #999 !important;
+            }
+            
+            .invoice-total-row {
+                background: #006622 !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .invoice-total-row .totals-label,
+            .invoice-total-row .totals-value {
+                color: #fff !important;
+                background: transparent !important;
+            }
+            
+            .section-title {
+                background: #f8f8f8 !important;
+                border-left: 3px solid #006622 !important;
+            }
+            
+            .status-badge, .status-selector, .status-option {
+                display: none !important;
+            }
+            
+            .row-actions, .btn-add-row, .btn-remove-row {
+                display: none !important;
+            }
+        }
+        
+        /* ==================== TOOLBAR ==================== */
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0.98), rgba(10, 10, 10, 0.95));
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+        
+        .toolbar-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .toolbar-brand span {
+            color: var(--matrix-green);
+        }
+        
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: var(--bg-card);
+            border-color: var(--matrix-green);
+        }
+        
+        .btn-primary {
+            background: var(--matrix-green);
+            color: var(--bg-dark);
+            border-color: var(--matrix-green);
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background: var(--matrix-green-dark);
+            box-shadow: 0 0 20px var(--matrix-green-glow);
+        }
+        
+        .btn-danger {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            padding-top: 80px;
+            padding-bottom: 40px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-shadow: 0 0 20px var(--matrix-green-glow);
+        }
+        
+        .logo span {
+            color: var(--matrix-green);
+        }
+        
+        .logo-tagline {
+            font-size: 8px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .doc-type {
+            text-align: right;
+        }
+        
+        .doc-type-badge {
+            display: inline-block;
+            background: var(--matrix-green);
+            color: var(--bg-dark);
+            padding: 5px 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .doc-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-primary);
+        }
+        
+        /* Invoice Meta Grid */
+        .invoice-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .meta-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+        }
+        
+        .meta-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--matrix-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+        
+        .meta-label {
+            font-size: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        .meta-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-primary);
+            background: var(--bg-input);
+            padding: 3px 8px;
+            border-radius: 3px;
+            border: 1px solid var(--border-color);
+            min-width: 100px;
+            text-align: right;
+        }
+        
+        .meta-value.highlight {
+            background: var(--matrix-green);
+            color: var(--bg-dark);
+            font-weight: 600;
+            border-color: var(--matrix-green);
+        }
+        
+        /* Parties Section */
+        .parties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .party-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .party-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .party-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .party-details {
+            font-size: 9px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .party-details .editable-line {
+            display: block;
+            padding: 2px 0;
+        }
+        
+        .party-id {
+            display: flex;
+            gap: 15px;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .party-id-item {
+            font-size: 8px;
+        }
+        
+        .party-id-label {
+            color: var(--text-muted);
+        }
+        
+        .party-id-value {
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Section Title */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(90deg, var(--bg-card), transparent);
+            padding: 5px 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 8px;
+            color: var(--matrix-green);
+            border-left: 2px solid var(--matrix-green);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .section-title::before {
+            content: '//';
+            color: var(--text-muted);
+        }
+        
+        /* Invoice Table */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        
+        .invoice-table th {
+            background: var(--bg-card);
+            color: var(--matrix-green);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 8px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+        
+        .invoice-table th.number {
+            text-align: right;
+        }
+        
+        .invoice-table td {
+            padding: 5px 8px;
+            border: 1px solid var(--border-color);
+            font-size: 9px;
+        }
+        
+        .invoice-table td.number {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .invoice-table tbody tr {
+            background: var(--bg-input);
+        }
+        
+        .item-index {
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+        }
+        
+        /* Totals Section */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+        
+        .totals-box {
+            width: 220px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+        
+        .totals-label {
+            font-size: 9px;
+            color: var(--text-secondary);
+        }
+        
+        .totals-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-primary);
+        }
+        
+        .invoice-total-row {
+            background: var(--matrix-green);
+        }
+        
+        .invoice-total-row .totals-label {
+            color: var(--bg-dark);
+            font-weight: 700;
+        }
+        
+        .invoice-total-row .totals-value {
+            color: var(--bg-dark);
+            font-weight: 700;
+            font-size: 12px;
+        }
+        
+        /* Payment Info */
+        .payment-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .payment-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .payment-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--matrix-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+        
+        .payment-label {
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+        
+        .payment-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-primary);
+        }
+        
+        .bank-account {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--cyan);
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        
+        /* QR Code Placeholder */
+        .qr-section {
+            text-align: center;
+        }
+        
+        .qr-placeholder {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.3;
+        }
+        
+        .qr-hint {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+        
+        /* Notes */
+        .notes-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .notes-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--matrix-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .notes-content {
+            font-size: 8px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            min-height: 30px;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .footer-left {
+            font-size: 7px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        
+        .footer-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--matrix-green);
+            margin-bottom: 3px;
+        }
+        
+        .signature-box {
+            text-align: center;
+        }
+        
+        .signature-line {
+            width: 140px;
+            height: 35px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 5px;
+        }
+        
+        .signature-label {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+        
+        /* Row Actions */
+        .row-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        tr:hover .row-actions {
+            opacity: 1;
+        }
+        
+        .btn-remove-row {
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-add-row {
+            background: transparent;
+            border: 1px dashed var(--border-color);
+            color: var(--text-muted);
+            padding: 6px;
+            width: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 6px;
+        }
+        
+        .btn-add-row:hover {
+            border-color: var(--matrix-green);
+            color: var(--matrix-green);
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--matrix-green);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast-message {
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- TOOLBAR -->
+    <div class="toolbar no-print">
+        <div class="toolbar-brand">[<span>ajtak.it</span>] Faktura</div>
+        <div class="toolbar-actions">
+            <button class="btn" onclick="addRow()">
+                <span>+</span>
+                Přidat řádek
+            </button>
+            <button class="btn" onclick="calculateTotals()">
+                <span>∑</span>
+                Přepočítat
+            </button>
+            <button class="btn" onclick="saveToFile()">
+                <span>💾</span>
+                Uložit
+            </button>
+            <button class="btn btn-danger" onclick="resetForm()">
+                <span>🗑️</span>
+                Reset
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+                <span>🖨️</span>
+                Vytisknout
+            </button>
+        </div>
+    </div>
+    
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <span class="toast-message" id="toastMessage">Uloženo</span>
+    </div>
+    
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="page">
+            <div class="page-content">
+            <!-- HEADER -->
+            <div class="header">
+                <div class="logo-section">
+                    <div>
+                        <div class="logo">[<span>ajtak.it</span>]</div>
+                        <div class="logo-tagline">IT služby na míru</div>
+                    </div>
+                </div>
+                <div class="doc-type">
+                    <div class="doc-type-badge">FAKTURA</div>
+                    <div class="doc-number">
+                        Číslo: <span contenteditable="true">FV-2024-001</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Invoice Meta -->
+            <div class="invoice-meta">
+                <div class="meta-box">
+                    <div class="meta-title">Datum</div>
+                    <div class="meta-row">
+                        <span class="meta-label">Vystavení</span>
+                        <span class="meta-value" contenteditable="true">01.12.2024</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Splatnost</span>
+                        <span class="meta-value highlight" contenteditable="true">15.12.2024</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Zdanit. plnění</span>
+                        <span class="meta-value" contenteditable="true">01.12.2024</span>
+                    </div>
+                </div>
+                <div class="meta-box">
+                    <div class="meta-title">Platba</div>
+                    <div class="meta-row">
+                        <span class="meta-label">Forma</span>
+                        <span class="meta-value" contenteditable="true">Převodem</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Var. symbol</span>
+                        <span class="meta-value" contenteditable="true">2024001</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Parties -->
+            <div class="parties">
+                <div class="party-box">
+                    <div class="party-title">Dodavatel</div>
+                    <div class="party-name" contenteditable="true">Julius Joska — ajtak.it</div>
+                    <div class="party-details">
+                        <span class="editable-line" contenteditable="true">Ulice 123, 261 01 Příbram</span>
+                        <span class="editable-line" contenteditable="true">Česká republika</span>
+                    </div>
+                    <div class="party-id">
+                        <div class="party-id-item">
+                            <span class="party-id-label">IČ: </span>
+                            <span class="party-id-value" contenteditable="true">________</span>
+                        </div>
+                        <div class="party-id-item">
+                            <span class="party-id-label">DIČ: </span>
+                            <span class="party-id-value" contenteditable="true">CZ________</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="party-box">
+                    <div class="party-title">Odběratel</div>
+                    <div class="party-name" contenteditable="true">Název firmy / Jméno</div>
+                    <div class="party-details">
+                        <span class="editable-line" contenteditable="true">Ulice a číslo, PSČ Město</span>
+                        <span class="editable-line" contenteditable="true">Česká republika</span>
+                    </div>
+                    <div class="party-id">
+                        <div class="party-id-item">
+                            <span class="party-id-label">IČ: </span>
+                            <span class="party-id-value" contenteditable="true">________</span>
+                        </div>
+                        <div class="party-id-item">
+                            <span class="party-id-label">DIČ: </span>
+                            <span class="party-id-value" contenteditable="true">________</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Invoice Items -->
+            <div class="section-title">Položky faktury</div>
+            <table class="invoice-table" id="invoiceTable">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">#</th>
+                        <th style="width: 45%;">Popis položky</th>
+                        <th style="width: 10%;" class="number">Množství</th>
+                        <th style="width: 8%;" class="number">MJ</th>
+                        <th style="width: 14%;" class="number">Cena/MJ</th>
+                        <th style="width: 14%;" class="number">Celkem</th>
+                        <th style="width: 4%;" class="no-print"></th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceBody">
+                    <tr>
+                        <td class="item-index">1</td>
+                        <td contenteditable="true">IT servis — diagnostika a oprava PC</td>
+                        <td class="number" contenteditable="true" data-field="qty">2</td>
+                        <td class="number" contenteditable="true">hod</td>
+                        <td class="number" contenteditable="true" data-field="price">850</td>
+                        <td class="number" data-field="total">1 700 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="item-index">2</td>
+                        <td contenteditable="true">Materiál — SSD disk 500GB</td>
+                        <td class="number" contenteditable="true" data-field="qty">1</td>
+                        <td class="number" contenteditable="true">ks</td>
+                        <td class="number" contenteditable="true" data-field="price">1490</td>
+                        <td class="number" data-field="total">1 490 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="item-index">3</td>
+                        <td contenteditable="true">Doprava / Výjezd</td>
+                        <td class="number" contenteditable="true" data-field="qty">1</td>
+                        <td class="number" contenteditable="true">ks</td>
+                        <td class="number" contenteditable="true" data-field="price">0</td>
+                        <td class="number" data-field="total">0 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn-add-row no-print" onclick="addRow()">+ Přidat položku</button>
+            
+            <!-- Totals -->
+            <div class="totals-section">
+                <div class="totals-box">
+                    <div class="totals-row">
+                        <span class="totals-label">Základ daně (21%)</span>
+                        <span class="totals-value" id="subtotal">3 190 Kč</span>
+                    </div>
+                    <div class="totals-row">
+                        <span class="totals-label">DPH 21%</span>
+                        <span class="totals-value" id="vatAmount">670 Kč</span>
+                    </div>
+                    <div class="totals-row invoice-total-row">
+                        <span class="totals-label">Celkem k úhradě</span>
+                        <span class="totals-value" id="totalAmount">3 860 Kč</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Info -->
+            <div class="payment-section">
+                <div class="payment-box">
+                    <div class="payment-title">Platební údaje</div>
+                    <div class="payment-row">
+                        <span class="payment-label">Banka</span>
+                        <span class="payment-value" contenteditable="true">Fio banka</span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">IBAN</span>
+                        <span class="payment-value" contenteditable="true">CZ00 0000 0000 0000 0000 0000</span>
+                    </div>
+                    <div class="bank-account" contenteditable="true">2700000000 / 2010</div>
+                </div>
+                <div class="payment-box qr-section">
+                    <div class="payment-title">QR Platba</div>
+                    <div class="qr-placeholder">
+                        QR kód<br>pro platbu
+                    </div>
+                    <div class="qr-hint">Naskenujte pro rychlou platbu</div>
+                </div>
+            </div>
+            
+            <!-- Notes -->
+            <div class="notes-section">
+                <div class="notes-title">Poznámky</div>
+                <div class="notes-content" contenteditable="true">
+                    Fakturujeme Vám za IT služby dle objednávky. Děkujeme za Vaši důvěru.
+                </div>
+            </div>
+            </div><!-- /page-content -->
+            
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-left">
+                    <div class="footer-brand">[ajtak.it] — IT služby na míru</div>
+                    <div>Doklad vystavil: Julius Joska | info@ajtak.it</div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <div class="signature-label">Podpis a razítko</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Calculate row total
+        function calculateRowTotal(row) {
+            const qtyCell = row.querySelector('[data-field="qty"]');
+            const priceCell = row.querySelector('[data-field="price"]');
+            const totalCell = row.querySelector('[data-field="total"]');
+            
+            if (!qtyCell || !priceCell || !totalCell) return 0;
+            
+            const qty = parseFloat(qtyCell.textContent.replace(',', '.')) || 0;
+            const price = parseFloat(priceCell.textContent.replace(/[^\d.-]/g, '').replace(',', '.')) || 0;
+            const total = qty * price;
+            
+            totalCell.textContent = formatCurrency(total);
+            return total;
+        }
+        
+        // Calculate all totals
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#invoiceBody tr');
+            let subtotal = 0;
+            
+            rows.forEach(row => {
+                subtotal += calculateRowTotal(row);
+            });
+            
+            const vatRate = 0.21;
+            const vat = subtotal * vatRate;
+            const total = subtotal + vat;
+            
+            document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('vatAmount').textContent = formatCurrency(vat);
+            document.getElementById('totalAmount').textContent = formatCurrency(total);
+            
+            showToast('Přepočítáno');
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return amount.toLocaleString('cs-CZ', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' Kč';
+        }
+        
+        // Add new row
+        function addRow() {
+            const tbody = document.getElementById('invoiceBody');
+            const rowCount = tbody.rows.length + 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="item-index">${rowCount}</td>
+                <td contenteditable="true">Popis položky</td>
+                <td class="number" contenteditable="true" data-field="qty">1</td>
+                <td class="number" contenteditable="true">ks</td>
+                <td class="number" contenteditable="true" data-field="price">0</td>
+                <td class="number" data-field="total">0 Kč</td>
+                <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+            `;
+            
+            tbody.appendChild(newRow);
+            attachRowListeners(newRow);
+            calculateTotals();
+        }
+        
+        // Remove row
+        function removeRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+            updateRowIndices();
+            calculateTotals();
+        }
+        
+        // Update row indices
+        function updateRowIndices() {
+            const rows = document.querySelectorAll('#invoiceBody tr');
+            rows.forEach((row, index) => {
+                const indexCell = row.querySelector('.item-index');
+                if (indexCell) {
+                    indexCell.textContent = index + 1;
+                }
+            });
+        }
+        
+        // Attach listeners to row
+        function attachRowListeners(row) {
+            const editableCells = row.querySelectorAll('[data-field="qty"], [data-field="price"]');
+            editableCells.forEach(cell => {
+                cell.addEventListener('input', () => calculateTotals());
+                cell.addEventListener('blur', () => calculateTotals());
+            });
+        }
+        
+        // Save to file
+        function saveToFile() {
+            showToast('Pro uložení použijte Ctrl+P → Uložit jako PDF');
+        }
+        
+        // Reset form
+        function resetForm() {
+            if (confirm('Opravdu chcete vymazat všechna data a začít znovu?')) {
+                location.reload();
+            }
+        }
+        
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attach listeners to existing rows
+            const rows = document.querySelectorAll('#invoiceBody tr');
+            rows.forEach(row => attachRowListeners(row));
+            
+            // Auto-calculate on any change
+            document.getElementById('invoiceTable').addEventListener('input', calculateTotals);
+            
+            // Initial calculation
+            calculateTotals();
+            
+            // Load customer data from URL if present
+            loadCustomerFromURL();
+        });
+        
+        // Load customer data from CRM
+        function loadCustomerFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const customerData = params.get('customer');
+            
+            if (customerData) {
+                try {
+                    const customer = JSON.parse(customerData);
+                    
+                    // Find the customer (odberatel) section
+                    const partyBoxes = document.querySelectorAll('.party-box');
+                    const odberatelBox = partyBoxes[1]; // Second party box is the customer
+                    
+                    if (odberatelBox) {
+                        // Set customer name
+                        const partyName = odberatelBox.querySelector('.party-name');
+                        if (partyName && customer.name) {
+                            partyName.textContent = customer.name;
+                        }
+                        
+                        // Set address
+                        const partyDetails = odberatelBox.querySelectorAll('.editable-line');
+                        if (partyDetails[0] && customer.address) {
+                            partyDetails[0].textContent = customer.address;
+                        }
+                        
+                        // Set IC and DIC
+                        const partyIds = odberatelBox.querySelectorAll('.party-id-value');
+                        if (partyIds[0] && customer.ic) {
+                            partyIds[0].textContent = customer.ic;
+                        }
+                        if (partyIds[1] && customer.dic) {
+                            partyIds[1].textContent = customer.dic;
+                        }
+                    }
+                    
+                    showToast('Data zakaznika nactena z CRM');
+                } catch (e) {
+                    console.error('Error loading customer data:', e);
+                }
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'n') {
+                    e.preventDefault();
+                    addRow();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

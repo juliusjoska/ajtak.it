@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cenová nabídka — ajtak.it</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-green-dark: #00cc33;
+            --matrix-green-glow: rgba(0, 255, 65, 0.3);
+            --cyan: #00d4ff;
+            --purple: #9945ff;
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --bg-input: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --border-color: #2a2a2a;
+            --accent: #9945ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 10px;
+            line-height: 1.4;
+            color: var(--text-primary);
+            background: var(--bg-dark);
+        }
+        
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 8mm;
+            margin: 20px auto;
+            background: linear-gradient(145deg, #0d0d0d 0%, #0a0a0a 50%, #080808 100%);
+            box-shadow: 0 0 60px rgba(153, 69, 255, 0.1), 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            /* Flexbox pro dynamický layout */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-content {
+            flex: 1;
+        }
+        
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple), var(--matrix-green), var(--purple), transparent);
+        }
+        
+        /* ==================== PRINT STYLES ==================== */
+        @media print {
+            @page {
+                size: A4;
+                margin: 5mm;
+            }
+            
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                box-shadow: none !important;
+            }
+            
+            html, body { 
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important; 
+                color: #000 !important;
+                font-size: 9pt !important;
+                width: 100% !important;
+            }
+            
+            .page { 
+                width: 100% !important;
+                max-width: 100% !important;
+                min-height: auto !important;
+                height: auto !important;
+                padding: 3mm !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: #fff !important;
+                display: block !important;
+            }
+            
+            /* Kontrola page-break */
+            .pricing-table tr {
+                page-break-inside: avoid !important;
+            }
+            
+            .totals-section, .validity-terms-row, .acceptance-section, .footer {
+                page-break-inside: avoid !important;
+            }
+            
+            /* Pokud je moc polozek, footer na novou stranku */
+            .footer {
+                margin-top: auto !important;
+            }
+            
+            .page::before, .page::after {
+                display: none !important;
+            }
+            
+            .no-print, .toolbar { 
+                display: none !important; 
+            }
+            
+            /* Vsechna pozadi bila */
+            .card, .section, .party-box, .project-box, .totals-box,
+            .validity-box, .terms-box, .acceptance-section, .footer,
+            .header, .quote-info, .info-box {
+                background: #fff !important;
+                border-color: #ccc !important;
+            }
+            
+            /* Vsechny texty cerne */
+            *, p, span, div, td, th, label, h1, h2, h3, h4, li, ul, input, textarea {
+                color: #000 !important;
+                text-shadow: none !important;
+                background-color: transparent !important;
+            }
+            
+            .logo span { color: #6633aa !important; }
+            .logo-tagline { color: #666 !important; }
+            
+            .doc-type-badge {
+                background: #6633aa !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .party-title, .section-title { color: #6633aa !important; }
+            .project-title { color: #006622 !important; }
+            
+            .section-title {
+                background: #f5f5f5 !important;
+                border-left: 3px solid #6633aa !important;
+            }
+            
+            .pricing-table th {
+                background: #f5f5f5 !important;
+                color: #000 !important;
+                border: 1px solid #999 !important;
+            }
+            
+            .pricing-table td {
+                background: #fff !important;
+                color: #000 !important;
+                border: 1px solid #999 !important;
+            }
+            
+            .pricing-table td[colspan] {
+                background: #f5f5f5 !important;
+                color: #6633aa !important;
+            }
+            
+            .totals-row.highlight {
+                background: #6633aa !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            
+            .totals-row.highlight .totals-label,
+            .totals-row.highlight .totals-value {
+                color: #fff !important;
+                background: transparent !important;
+            }
+            
+            .validity-box {
+                background: #faf8ff !important;
+                border: 1px solid #6633aa !important;
+            }
+            
+            .validity-title { color: #6633aa !important; }
+            
+            .terms-box {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+            }
+            
+            .terms-title { color: #006622 !important; }
+            
+            .acceptance-section {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+                page-break-inside: avoid !important;
+            }
+            
+            .signature-area {
+                border-bottom: 1px solid #000 !important;
+                background: #fff !important;
+            }
+            
+            .footer {
+                border-top: 1px solid #ccc !important;
+                page-break-inside: avoid !important;
+            }
+            
+            .footer-brand { color: #006622 !important; }
+            
+            .row-actions, .btn-add-row, .btn-remove-row {
+                display: none !important;
+            }
+        }
+        
+        /* ==================== TOOLBAR ==================== */
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0.98), rgba(10, 10, 10, 0.95));
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+        
+        .toolbar-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .toolbar-brand span {
+            color: var(--purple);
+        }
+        
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: var(--bg-card);
+            border-color: var(--purple);
+        }
+        
+        .btn-primary {
+            background: var(--purple);
+            color: white;
+            border-color: var(--purple);
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background: #7733cc;
+            box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
+        }
+        
+        .btn-danger {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+        
+        .btn-danger:hover {
+            background: #ff4444;
+            color: white;
+        }
+        
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            padding-top: 80px;
+            padding-bottom: 40px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-shadow: 0 0 20px var(--matrix-green-glow);
+        }
+        
+        .logo span {
+            color: var(--matrix-green);
+        }
+        
+        .logo-tagline {
+            font-size: 8px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .doc-type {
+            text-align: right;
+        }
+        
+        .doc-type-badge {
+            display: inline-block;
+            background: var(--purple);
+            color: white;
+            padding: 5px 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .doc-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        
+        /* Quote Info */
+        .quote-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .info-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+        
+        .info-label {
+            font-size: 7px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+        
+        .info-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-primary);
+        }
+        
+        .info-value.highlight {
+            color: var(--purple);
+            font-weight: 600;
+        }
+        
+        /* Parties */
+        .parties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .party-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .party-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .party-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .party-details {
+            font-size: 9px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .party-details .editable-line {
+            display: block;
+            padding: 2px 0;
+        }
+        
+        /* Section Title */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(90deg, var(--bg-card), transparent);
+            padding: 5px 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 8px;
+            color: var(--purple);
+            border-left: 2px solid var(--purple);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .section-title::before {
+            content: '//';
+            color: var(--text-muted);
+        }
+        
+        /* Project Description */
+        .project-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .project-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--matrix-green);
+            margin-bottom: 6px;
+        }
+        
+        .project-desc {
+            font-size: 9px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            min-height: 40px;
+        }
+        
+        /* Pricing Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-table th {
+            background: var(--bg-card);
+            color: var(--purple);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 8px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+        
+        .pricing-table th.number {
+            text-align: right;
+        }
+        
+        .pricing-table td {
+            padding: 5px 8px;
+            border: 1px solid var(--border-color);
+            font-size: 9px;
+        }
+        
+        .pricing-table td.number {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .pricing-table tbody tr {
+            background: var(--bg-input);
+        }
+        
+        .pricing-table td[colspan] {
+            background: var(--bg-card);
+            color: var(--purple);
+            font-weight: 600;
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .item-index {
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+        }
+        
+        /* Totals */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+        
+        .totals-box {
+            width: 250px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+        
+        .totals-label {
+            font-size: 9px;
+            color: var(--text-secondary);
+        }
+        
+        .totals-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-primary);
+        }
+        
+        .totals-row.highlight {
+            background: var(--purple);
+        }
+        
+        .totals-row.highlight .totals-label,
+        .totals-row.highlight .totals-value {
+            color: white;
+            font-weight: 700;
+        }
+        
+        .totals-row.highlight .totals-value {
+            font-size: 12px;
+        }
+        
+        /* Validity & Terms compact */
+        .validity-terms-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .validity-box {
+            background: linear-gradient(135deg, rgba(153, 69, 255, 0.1), rgba(0, 255, 65, 0.05));
+            border: 1px solid var(--purple);
+            border-radius: 6px;
+            padding: 8px;
+        }
+        
+        .validity-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--purple);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .validity-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+        
+        .validity-item {
+            padding: 6px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .validity-label {
+            font-size: 7px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        
+        .validity-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        /* Terms */
+        .terms-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+        }
+        
+        .terms-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--matrix-green);
+            margin-bottom: 5px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .terms-content {
+            font-size: 7px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .terms-content p {
+            margin-bottom: 3px;
+        }
+        
+        /* Acceptance */
+        .acceptance-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+        
+        .acceptance-box {
+            text-align: center;
+        }
+        
+        .acceptance-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .signature-area {
+            height: 35px;
+            border-bottom: 1px solid var(--border-color);
+            margin: 0 auto 6px;
+            width: 150px;
+        }
+        
+        .signature-info {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+        
+        /* Footer */
+        .footer {
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-left {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+        
+        .footer-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--matrix-green);
+            margin-bottom: 3px;
+        }
+        
+        .footer-right {
+            text-align: right;
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+        
+        /* Row Actions */
+        .row-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        tr:hover .row-actions {
+            opacity: 1;
+        }
+        
+        .btn-remove-row {
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-add-row {
+            background: transparent;
+            border: 1px dashed var(--border-color);
+            color: var(--text-muted);
+            padding: 6px;
+            width: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 6px;
+        }
+        
+        .btn-add-row:hover {
+            border-color: var(--purple);
+            color: var(--purple);
+            background: rgba(153, 69, 255, 0.05);
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--purple);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast-message {
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- TOOLBAR -->
+    <div class="toolbar no-print">
+        <div class="toolbar-brand">[<span>ajtak.it</span>] Cenová nabídka</div>
+        <div class="toolbar-actions">
+            <button class="btn" onclick="addRow()">
+                <span>+</span>
+                Přidat řádek
+            </button>
+            <button class="btn" onclick="calculateTotals()">
+                <span>∑</span>
+                Přepočítat
+            </button>
+            <button class="btn" onclick="saveToFile()">
+                <span>💾</span>
+                Uložit
+            </button>
+            <button class="btn btn-danger" onclick="resetForm()">
+                <span>🗑️</span>
+                Reset
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+                <span>🖨️</span>
+                Vytisknout
+            </button>
+        </div>
+    </div>
+    
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <span class="toast-message" id="toastMessage">Uloženo</span>
+    </div>
+    
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="page">
+            <div class="page-content">
+            <!-- HEADER -->
+            <div class="header">
+                <div class="logo-section">
+                    <div>
+                        <div class="logo">[<span>ajtak.it</span>]</div>
+                        <div class="logo-tagline">IT služby na míru</div>
+                    </div>
+                </div>
+                <div class="doc-type">
+                    <div class="doc-type-badge">CENOVÁ NABÍDKA</div>
+                    <div class="doc-number">
+                        Číslo: <span contenteditable="true">CN-2024-001</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quote Info -->
+            <div class="quote-info">
+                <div class="info-box">
+                    <div class="info-label">Datum vystavení</div>
+                    <div class="info-value" contenteditable="true">01.12.2024</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Platnost nabídky</div>
+                    <div class="info-value highlight" contenteditable="true">30 dní</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Platná do</div>
+                    <div class="info-value" contenteditable="true">31.12.2024</div>
+                </div>
+            </div>
+            
+            <!-- Parties -->
+            <div class="parties">
+                <div class="party-box">
+                    <div class="party-title">Dodavatel</div>
+                    <div class="party-name" contenteditable="true">Julius Joska — ajtak.it</div>
+                    <div class="party-details">
+                        <span class="editable-line" contenteditable="true">Ulice 123, 261 01 Příbram</span>
+                        <span class="editable-line" contenteditable="true">IČ: ________ | DIČ: CZ________</span>
+                        <span class="editable-line" contenteditable="true">info@ajtak.it | www.ajtak.it</span>
+                    </div>
+                </div>
+                <div class="party-box">
+                    <div class="party-title">Zákazník</div>
+                    <div class="party-name" contenteditable="true">Název firmy / Jméno zákazníka</div>
+                    <div class="party-details">
+                        <span class="editable-line" contenteditable="true">Ulice a číslo, PSČ Město</span>
+                        <span class="editable-line" contenteditable="true">IČ: ________ | DIČ: ________</span>
+                        <span class="editable-line" contenteditable="true">Kontaktní osoba: ________</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project Description -->
+            <div class="section-title">Předmět nabídky</div>
+            <div class="project-box">
+                <div class="project-title">Popis projektu / požadavku</div>
+                <div class="project-desc" contenteditable="true">
+                    Zde popište předmět cenové nabídky, rozsah prací, požadavky zákazníka. Například: Kompletní revize IT infrastruktury včetně auditu sítě, návrhu optimalizace a implementace doporučených změn.
+                </div>
+            </div>
+            
+            <!-- Detailed Pricing -->
+            <div class="section-title">Detailní kalkulace</div>
+            <table class="pricing-table" id="pricingTable">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">#</th>
+                        <th style="width: 45%;">Položka</th>
+                        <th style="width: 10%;" class="number">Množství</th>
+                        <th style="width: 8%;" class="number">MJ</th>
+                        <th style="width: 14%;" class="number">Cena/MJ</th>
+                        <th style="width: 14%;" class="number">Celkem</th>
+                        <th style="width: 4%;" class="no-print"></th>
+                    </tr>
+                </thead>
+                <tbody id="pricingBody">
+                    <tr>
+                        <td colspan="7">Práce</td>
+                    </tr>
+                    <tr>
+                        <td class="item-index">1</td>
+                        <td contenteditable="true">Analýza a audit</td>
+                        <td class="number" contenteditable="true" data-field="qty">4</td>
+                        <td class="number" contenteditable="true">hod</td>
+                        <td class="number" contenteditable="true" data-field="price">1000</td>
+                        <td class="number" data-field="total">4 000 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="item-index">2</td>
+                        <td contenteditable="true">Implementace a konfigurace</td>
+                        <td class="number" contenteditable="true" data-field="qty">8</td>
+                        <td class="number" contenteditable="true">hod</td>
+                        <td class="number" contenteditable="true" data-field="price">990</td>
+                        <td class="number" data-field="total">7 920 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="item-index">3</td>
+                        <td contenteditable="true">Testování a dokumentace</td>
+                        <td class="number" contenteditable="true" data-field="qty">3</td>
+                        <td class="number" contenteditable="true">hod</td>
+                        <td class="number" contenteditable="true" data-field="price">850</td>
+                        <td class="number" data-field="total">2 550 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                    <tr>
+                        <td colspan="7">Materiál & licence</td>
+                    </tr>
+                    <tr>
+                        <td class="item-index">4</td>
+                        <td contenteditable="true">Software licence (roční)</td>
+                        <td class="number" contenteditable="true" data-field="qty">1</td>
+                        <td class="number" contenteditable="true">ks</td>
+                        <td class="number" contenteditable="true" data-field="price">5000</td>
+                        <td class="number" data-field="total">5 000 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                    <tr>
+                        <td class="item-index">5</td>
+                        <td contenteditable="true">Školení uživatelů</td>
+                        <td class="number" contenteditable="true" data-field="qty">2</td>
+                        <td class="number" contenteditable="true">hod</td>
+                        <td class="number" contenteditable="true" data-field="price">800</td>
+                        <td class="number" data-field="total">1 600 Kč</td>
+                        <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn-add-row no-print" onclick="addRow()">+ Přidat položku</button>
+            
+            <!-- Totals -->
+            <div class="totals-section">
+                <div class="totals-box">
+                    <div class="totals-row">
+                        <span class="totals-label">Celkem bez DPH</span>
+                        <span class="totals-value" id="subtotal">21 070 Kč</span>
+                    </div>
+                    <div class="totals-row">
+                        <span class="totals-label">DPH 21%</span>
+                        <span class="totals-value" id="vatAmount">4 425 Kč</span>
+                    </div>
+                    <div class="totals-row highlight">
+                        <span class="totals-label">Celkem s DPH</span>
+                        <span class="totals-value" id="totalAmount">25 495 Kč</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Validity & Terms -->
+            <div class="validity-terms-row">
+                <div class="validity-box">
+                    <div class="validity-title">
+                        <span>📅</span>
+                        Časový rámec
+                    </div>
+                    <div class="validity-grid">
+                        <div class="validity-item">
+                            <div class="validity-label">Začátek</div>
+                            <div class="validity-value" contenteditable="true">Po schválení</div>
+                        </div>
+                        <div class="validity-item">
+                            <div class="validity-label">Doba realizace</div>
+                            <div class="validity-value" contenteditable="true">5–7 dní</div>
+                        </div>
+                        <div class="validity-item">
+                            <div class="validity-label">Platba</div>
+                            <div class="validity-value" contenteditable="true">50% záloha</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="terms-box">
+                    <div class="terms-title">Obchodní podmínky</div>
+                    <div class="terms-content">
+                        <p><strong>Platnost:</strong> Nabídka platná po dobu uvedenou výše.</p>
+                        <p><strong>Ceny:</strong> Bez DPH, DPH bude přičtena dle platné sazby.</p>
+                        <p><strong>Platba:</strong> 50% záloha, 50% po dokončení.</p>
+                        <p><strong>Změny:</strong> Mohou ovlivnit cenu a termín.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Acceptance Section -->
+            <div class="acceptance-section">
+                <div class="acceptance-box">
+                    <div class="acceptance-title">Zákazník</div>
+                    <div class="signature-area"></div>
+                    <div class="signature-info">Podpis | Datum: ___________</div>
+                </div>
+                <div class="acceptance-box">
+                    <div class="acceptance-title">Dodavatel</div>
+                    <div class="signature-area"></div>
+                    <div class="signature-info">Podpis | Datum: ___________</div>
+                </div>
+            </div>
+            </div><!-- /page-content -->
+            
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-left">
+                    <div class="footer-brand">[ajtak.it] — IT služby na míru</div>
+                    <div>Julius Joska | info@ajtak.it | www.ajtak.it</div>
+                </div>
+                <div class="footer-right">
+                    Děkujeme za možnost vytvořit nabídku.<br>
+                    V případě dotazů nás kontaktujte.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Calculate row total
+        function calculateRowTotal(row) {
+            const qtyCell = row.querySelector('[data-field="qty"]');
+            const priceCell = row.querySelector('[data-field="price"]');
+            const totalCell = row.querySelector('[data-field="total"]');
+            
+            if (!qtyCell || !priceCell || !totalCell) return 0;
+            
+            const qty = parseFloat(qtyCell.textContent.replace(',', '.')) || 0;
+            const price = parseFloat(priceCell.textContent.replace(/[^\d.-]/g, '').replace(',', '.')) || 0;
+            const total = qty * price;
+            
+            totalCell.textContent = formatCurrency(total);
+            return total;
+        }
+        
+        // Calculate all totals
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#pricingBody tr');
+            let subtotal = 0;
+            
+            rows.forEach(row => {
+                if (row.querySelector('[data-field="qty"]')) {
+                    subtotal += calculateRowTotal(row);
+                }
+            });
+            
+            const vatRate = 0.21;
+            const vat = subtotal * vatRate;
+            const total = subtotal + vat;
+            
+            document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('vatAmount').textContent = formatCurrency(vat);
+            document.getElementById('totalAmount').textContent = formatCurrency(total);
+            
+            showToast('Přepočítáno');
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return amount.toLocaleString('cs-CZ', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' Kč';
+        }
+        
+        // Add new row
+        function addRow() {
+            const tbody = document.getElementById('pricingBody');
+            const existingRows = tbody.querySelectorAll('tr:not([colspan])');
+            const rowCount = existingRows.length + 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="item-index">${rowCount}</td>
+                <td contenteditable="true">Nová položka</td>
+                <td class="number" contenteditable="true" data-field="qty">1</td>
+                <td class="number" contenteditable="true">ks</td>
+                <td class="number" contenteditable="true" data-field="price">0</td>
+                <td class="number" data-field="total">0 Kč</td>
+                <td class="no-print"><div class="row-actions"><button class="btn-remove-row" onclick="removeRow(this)">×</button></div></td>
+            `;
+            
+            tbody.appendChild(newRow);
+            attachRowListeners(newRow);
+            calculateTotals();
+        }
+        
+        // Remove row
+        function removeRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+            updateRowIndices();
+            calculateTotals();
+        }
+        
+        // Update row indices
+        function updateRowIndices() {
+            const rows = document.querySelectorAll('#pricingBody tr');
+            let index = 1;
+            rows.forEach(row => {
+                const indexCell = row.querySelector('.item-index');
+                if (indexCell) {
+                    indexCell.textContent = index++;
+                }
+            });
+        }
+        
+        // Attach listeners to row
+        function attachRowListeners(row) {
+            const editableCells = row.querySelectorAll('[data-field="qty"], [data-field="price"]');
+            editableCells.forEach(cell => {
+                cell.addEventListener('input', () => calculateTotals());
+                cell.addEventListener('blur', () => calculateTotals());
+            });
+        }
+        
+        // Save to file
+        function saveToFile() {
+            showToast('Pro uložení použijte Ctrl+P → Uložit jako PDF');
+        }
+        
+        // Reset form
+        function resetForm() {
+            if (confirm('Opravdu chcete vymazat všechna data a začít znovu?')) {
+                location.reload();
+            }
+        }
+        
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attach listeners to existing rows
+            const rows = document.querySelectorAll('#pricingBody tr');
+            rows.forEach(row => attachRowListeners(row));
+            
+            // Auto-calculate on any change
+            document.getElementById('pricingTable').addEventListener('input', calculateTotals);
+            
+            // Initial calculation
+            calculateTotals();
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'n') {
+                    e.preventDefault();
+                    addRow();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

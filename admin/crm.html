@@ -1,0 +1,2539 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Dashboard | ajtak.it</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-green-dark: #00cc33;
+            --matrix-green-glow: rgba(0, 255, 65, 0.3);
+            --matrix-green-subtle: rgba(0, 255, 65, 0.1);
+            --cyan: #00d4ff;
+            --cyan-glow: rgba(0, 212, 255, 0.3);
+            --orange: #ff9500;
+            --red: #ff3b30;
+            --purple: #af52de;
+            --yellow: #ffcc00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --bg-card: #111111;
+            --bg-card-hover: #1a1a1a;
+            --bg-input: #161616;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --border-color: #2a2a2a;
+            --border-focus: #00ff41;
+            --sidebar-width: 260px;
+            --header-height: 60px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-darker);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ==================== LAYOUT ==================== */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-dark);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .sidebar-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sidebar-logo span {
+            color: var(--matrix-green);
+            text-shadow: 0 0 10px var(--matrix-green-glow);
+        }
+        
+        .sidebar-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 15px 10px;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: 25px;
+        }
+        
+        .nav-section-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            text-decoration: none;
+        }
+        
+        .nav-item:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--matrix-green-subtle);
+            color: var(--matrix-green);
+        }
+        
+        .nav-item.active .nav-icon {
+            color: var(--matrix-green);
+        }
+        
+        .nav-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .nav-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .nav-badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .nav-badge.green {
+            background: var(--matrix-green);
+            color: var(--bg-dark);
+        }
+        
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .user-card:hover {
+            background: var(--bg-card-hover);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--matrix-green), var(--cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--bg-dark);
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .user-role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ==================== HEADER ==================== */
+        .main-header {
+            height: var(--header-height);
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            color: var(--matrix-green);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-input {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 16px 10px 40px;
+            color: var(--text-primary);
+            font-size: 13px;
+            width: 280px;
+            transition: all 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 0 3px var(--matrix-green-subtle);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .header-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--matrix-green);
+        }
+        
+        .header-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: var(--red);
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* ==================== PAGE CONTENT ==================== */
+        .page-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        /* ==================== STATS CARDS ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--matrix-green);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .stat-icon.green {
+            background: var(--matrix-green-subtle);
+            color: var(--matrix-green);
+        }
+        
+        .stat-icon.cyan {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--cyan);
+        }
+        
+        .stat-icon.orange {
+            background: rgba(255, 149, 0, 0.1);
+            color: var(--orange);
+        }
+        
+        .stat-icon.purple {
+            background: rgba(175, 82, 222, 0.1);
+            color: var(--purple);
+        }
+        
+        .stat-trend {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        
+        .stat-trend.up {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--matrix-green);
+        }
+        
+        .stat-trend.down {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--red);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        /* ==================== CONTENT GRID ==================== */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        
+        .content-grid.full {
+            grid-template-columns: 1fr;
+        }
+        
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title-icon {
+            color: var(--matrix-green);
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .card-body.no-padding {
+            padding: 0;
+        }
+        
+        /* ==================== BUTTONS ==================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            text-decoration: none;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .btn-primary {
+            background: var(--matrix-green);
+            color: var(--bg-dark);
+            border-color: var(--matrix-green);
+        }
+        
+        .btn-primary:hover {
+            background: var(--matrix-green-dark);
+            box-shadow: 0 0 20px var(--matrix-green-glow);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--matrix-green);
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+        
+        .btn-ghost:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        .btn-danger {
+            background: transparent;
+            color: var(--red);
+            border-color: var(--red);
+        }
+        
+        .btn-danger:hover {
+            background: var(--red);
+            color: white;
+        }
+        
+        /* ==================== TABLES ==================== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--bg-input);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+        
+        .data-table tbody tr {
+            transition: background 0.2s;
+        }
+        
+        .data-table tbody tr:hover {
+            background: var(--bg-input);
+        }
+        
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* ==================== CUSTOMER ROW ==================== */
+        .customer-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .customer-avatar.company {
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            color: white;
+        }
+        
+        .customer-avatar.person {
+            background: linear-gradient(135deg, var(--matrix-green), var(--cyan));
+            color: var(--bg-dark);
+        }
+        
+        .customer-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .customer-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* ==================== STATUS BADGES ==================== */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-badge.active {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--matrix-green);
+        }
+        
+        .status-badge.pending {
+            background: rgba(255, 149, 0, 0.1);
+            color: var(--orange);
+        }
+        
+        .status-badge.inactive {
+            background: rgba(136, 136, 136, 0.1);
+            color: var(--text-secondary);
+        }
+        
+        .status-badge.premium {
+            background: rgba(175, 82, 222, 0.1);
+            color: var(--purple);
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        
+        /* ==================== ACTION MENU ==================== */
+        .action-menu {
+            position: relative;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        .action-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 180px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .action-menu:hover .action-dropdown,
+        .action-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(4px);
+        }
+        
+        .action-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-dropdown-item:hover {
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+        
+        .action-dropdown-item.danger {
+            color: var(--red);
+        }
+        
+        .action-dropdown-item.danger:hover {
+            background: rgba(255, 59, 48, 0.1);
+        }
+        
+        .action-dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 6px 0;
+        }
+        
+        /* ==================== RECENT ACTIVITY ==================== */
+        .activity-list {
+            list-style: none;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.green {
+            background: var(--matrix-green-subtle);
+            color: var(--matrix-green);
+        }
+        
+        .activity-icon.cyan {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--cyan);
+        }
+        
+        .activity-icon.orange {
+            background: rgba(255, 149, 0, 0.1);
+            color: var(--orange);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        
+        .activity-text strong {
+            color: var(--text-primary);
+        }
+        
+        .activity-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        /* ==================== QUICK ACTIONS ==================== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .quick-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .quick-action:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--matrix-green);
+            transform: translateY(-2px);
+        }
+        
+        .quick-action-icon {
+            font-size: 24px;
+        }
+        
+        .quick-action-label {
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        /* ==================== MODALS ==================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 560px;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .modal-title-icon {
+            color: var(--matrix-green);
+        }
+        
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-card);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: var(--red);
+            color: white;
+        }
+        
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+        
+        /* ==================== FORM ELEMENTS ==================== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 0 3px var(--matrix-green-subtle);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .form-checkbox input {
+            display: none;
+        }
+        
+        .form-checkbox-box {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .form-checkbox input:checked + .form-checkbox-box {
+            background: var(--matrix-green);
+            border-color: var(--matrix-green);
+        }
+        
+        .form-checkbox input:checked + .form-checkbox-box::after {
+            content: '✓';
+            color: var(--bg-dark);
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .form-checkbox-label {
+            font-size: 13px;
+        }
+        
+        /* ==================== TABS ==================== */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            color: var(--text-primary);
+        }
+        
+        .tab.active {
+            background: var(--bg-card);
+            color: var(--matrix-green);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ==================== EMPTY STATE ==================== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .empty-state-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        
+        /* ==================== TOAST ==================== */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            border-color: var(--matrix-green);
+        }
+        
+        .toast.error {
+            border-color: var(--red);
+        }
+        
+        .toast-icon {
+            font-size: 20px;
+        }
+        
+        .toast.success .toast-icon {
+            color: var(--matrix-green);
+        }
+        
+        .toast.error .toast-icon {
+            color: var(--red);
+        }
+        
+        .toast-message {
+            flex: 1;
+            font-size: 13px;
+        }
+        
+        /* ==================== FILTER BAR ==================== */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+        
+        .filter-btn.active {
+            background: var(--matrix-green-subtle);
+            border-color: var(--matrix-green);
+            color: var(--matrix-green);
+        }
+        
+        /* ==================== PAGINATION ==================== */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .pagination-buttons {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .pagination-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+        
+        .pagination-btn.active {
+            background: var(--matrix-green);
+            border-color: var(--matrix-green);
+            color: var(--bg-dark);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .search-input {
+                width: 200px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-content {
+                padding: 16px;
+            }
+        }
+        
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        /* ==================== SCROLLBAR ==================== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">[<span>ajtak.it</span>]</div>
+                <div class="sidebar-subtitle">CRM & Helpdesk System</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Hlavni menu</div>
+                    <a href="#" class="nav-item active" data-page="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="customers">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-label">Zakaznici</span>
+                        <span class="nav-badge green">24</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="tickets">
+                        <span class="nav-icon">🎫</span>
+                        <span class="nav-label">Helpdesk</span>
+                        <span class="nav-badge">5</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="chat">
+                        <span class="nav-icon">💬</span>
+                        <span class="nav-label">Team Chat</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Dokumenty</div>
+                    <a href="../FAKTURA_VZOR.html" class="nav-item" target="_blank">
+                        <span class="nav-icon">📄</span>
+                        <span class="nav-label">Faktura</span>
+                    </a>
+                    <a href="../SERVISNI_LIST_VZOR.html" class="nav-item" target="_blank">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-label">Servisni list</span>
+                    </a>
+                    <a href="../CENOVA_NABIDKA_VZOR.html" class="nav-item" target="_blank">
+                        <span class="nav-icon">💰</span>
+                        <span class="nav-label">Cenova nabidka</span>
+                    </a>
+                    <a href="../PREDAVACI_PROTOKOL_VZOR.html" class="nav-item" target="_blank">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-label">Predavaci protokol</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Nastroje</div>
+                    <a href="kalkulacka.html" class="nav-item">
+                        <span class="nav-icon">🧮</span>
+                        <span class="nav-label">Kalkulacka</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="reports">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-label">Reporty</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Nastaveni</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-card" onclick="toggleUserMenu()">
+                    <div class="user-avatar">JJ</div>
+                    <div class="user-info">
+                        <div class="user-name">Julius Joska</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                    <span>⋮</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                
+                <div class="header-right">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="Hledat zakazniky, tikety..." id="globalSearch">
+                    </div>
+                    <button class="header-btn" onclick="showNotifications()" title="Notifikace">
+                        🔔
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="header-btn" onclick="openNewCustomerModal()" title="Novy zakaznik">
+                        ➕
+                    </button>
+                </div>
+            </header>
+            
+            <!-- PAGE: DASHBOARD -->
+            <div class="page-content" id="page-dashboard">
+                <!-- STATS -->
+                <div class="stats-grid">
+                    <div class="stat-card animate-in">
+                        <div class="stat-header">
+                            <div class="stat-icon green">👥</div>
+                            <span class="stat-trend up">+12%</span>
+                        </div>
+                        <div class="stat-value" id="statCustomers">24</div>
+                        <div class="stat-label">Aktivnich zakazniku</div>
+                    </div>
+                    <div class="stat-card animate-in" style="animation-delay: 0.1s">
+                        <div class="stat-header">
+                            <div class="stat-icon orange">🎫</div>
+                            <span class="stat-trend up">+3</span>
+                        </div>
+                        <div class="stat-value" id="statTickets">5</div>
+                        <div class="stat-label">Otevrenych tiketu</div>
+                    </div>
+                    <div class="stat-card animate-in" style="animation-delay: 0.2s">
+                        <div class="stat-header">
+                            <div class="stat-icon cyan">📄</div>
+                        </div>
+                        <div class="stat-value" id="statInvoices">12</div>
+                        <div class="stat-label">Faktur tento mesic</div>
+                    </div>
+                    <div class="stat-card animate-in" style="animation-delay: 0.3s">
+                        <div class="stat-header">
+                            <div class="stat-icon purple">💰</div>
+                            <span class="stat-trend up">+8%</span>
+                        </div>
+                        <div class="stat-value" id="statRevenue">48.5K</div>
+                        <div class="stat-label">Trzby tento mesic</div>
+                    </div>
+                </div>
+                
+                <div class="content-grid">
+                    <!-- RECENT CUSTOMERS -->
+                    <div class="card animate-in" style="animation-delay: 0.4s">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="card-title-icon">👥</span>
+                                Posledni zakaznici
+                            </h3>
+                            <div class="card-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="showPage('customers')">Zobrazit vse</button>
+                            </div>
+                        </div>
+                        <div class="card-body no-padding">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Zakaznik</th>
+                                        <th>Status</th>
+                                        <th>Posledni aktivita</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentCustomersTable">
+                                    <!-- Filled by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- QUICK ACTIONS + ACTIVITY -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <div class="card animate-in" style="animation-delay: 0.5s">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <span class="card-title-icon">⚡</span>
+                                    Rychle akce
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions">
+                                    <a href="#" class="quick-action" onclick="openNewCustomerModal(); return false;">
+                                        <span class="quick-action-icon">👤</span>
+                                        <span class="quick-action-label">Novy zakaznik</span>
+                                    </a>
+                                    <a href="#" class="quick-action" onclick="createDocumentForCustomer('invoice'); return false;">
+                                        <span class="quick-action-icon">📄</span>
+                                        <span class="quick-action-label">Nova faktura</span>
+                                    </a>
+                                    <a href="#" class="quick-action" onclick="createDocumentForCustomer('service'); return false;">
+                                        <span class="quick-action-icon">🔧</span>
+                                        <span class="quick-action-label">Novy servis</span>
+                                    </a>
+                                    <a href="#" class="quick-action" onclick="showPage('chat'); return false;">
+                                        <span class="quick-action-icon">💬</span>
+                                        <span class="quick-action-label">Team chat</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate-in" style="animation-delay: 0.6s">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <span class="card-title-icon">📝</span>
+                                    Posledni aktivita
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="activity-list" id="activityList">
+                                    <!-- Filled by JS -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PAGE: CUSTOMERS -->
+            <div class="page-content" id="page-customers" style="display: none;">
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <button class="filter-btn active" onclick="filterCustomers('all', this)">Vsichni</button>
+                        <button class="filter-btn" onclick="filterCustomers('active', this)">Aktivni</button>
+                        <button class="filter-btn" onclick="filterCustomers('premium', this)">Premium</button>
+                        <button class="filter-btn" onclick="filterCustomers('inactive', this)">Neaktivni</button>
+                    </div>
+                    <div style="flex: 1;"></div>
+                    <button class="btn btn-secondary" onclick="importCustomers()">
+                        📥 Import
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportCustomers()">
+                        📤 Export
+                    </button>
+                    <button class="btn btn-primary" onclick="openNewCustomerModal()">
+                        ➕ Novy zakaznik
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Zakaznik</th>
+                                    <th>Kontakt</th>
+                                    <th>Typ</th>
+                                    <th>Status</th>
+                                    <th>Faktury</th>
+                                    <th>Posledni aktivita</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTable">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <div class="pagination-info">Zobrazeno 1-10 z <span id="totalCustomers">24</span> zakazniku</div>
+                        <div class="pagination-buttons">
+                            <button class="pagination-btn" disabled>←</button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <button class="pagination-btn">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PAGE: TICKETS (HELPDESK) -->
+            <div class="page-content" id="page-tickets" style="display: none;">
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <button class="filter-btn active">Vsechny</button>
+                        <button class="filter-btn">Otevrene</button>
+                        <button class="filter-btn">V reseni</button>
+                        <button class="filter-btn">Uzavrene</button>
+                    </div>
+                    <div style="flex: 1;"></div>
+                    <button class="btn btn-primary" onclick="openNewTicketModal()">
+                        ➕ Novy tiket
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Predmet</th>
+                                    <th>Zakaznik</th>
+                                    <th>Priorita</th>
+                                    <th>Status</th>
+                                    <th>Vytvoreno</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketsTable">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PAGE: CHAT -->
+            <div class="page-content" id="page-chat" style="display: none;">
+                <div class="content-grid" style="grid-template-columns: 300px 1fr; height: calc(100vh - 140px);">
+                    <!-- Chat list -->
+                    <div class="card" style="display: flex; flex-direction: column;">
+                        <div class="card-header">
+                            <h3 class="card-title">Konverzace</h3>
+                            <button class="btn btn-sm btn-ghost">➕</button>
+                        </div>
+                        <div class="card-body no-padding" style="flex: 1; overflow-y: auto;">
+                            <div id="chatList">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat window -->
+                    <div class="card" style="display: flex; flex-direction: column;">
+                        <div class="card-header">
+                            <h3 class="card-title" id="chatTitle">
+                                <span class="card-title-icon">💬</span>
+                                Vyberte konverzaci
+                            </h3>
+                            <div class="card-actions">
+                                <button class="btn btn-sm btn-ghost" onclick="attachFile()">📎</button>
+                                <button class="btn btn-sm btn-ghost" onclick="startVideoCall()">📹</button>
+                            </div>
+                        </div>
+                        <div class="card-body" style="flex: 1; overflow-y: auto; padding: 20px;" id="chatMessages">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">💬</div>
+                                <div class="empty-state-title">Zadne zpravy</div>
+                                <div class="empty-state-text">Vyberte konverzaci nebo zacnete novou</div>
+                            </div>
+                        </div>
+                        <div style="padding: 16px; border-top: 1px solid var(--border-color);">
+                            <div style="display: flex; gap: 12px;">
+                                <input type="text" class="form-input" placeholder="Napiste zpravu..." id="chatInput" onkeypress="if(event.key==='Enter')sendMessage()">
+                                <button class="btn btn-primary" onclick="sendMessage()">Odeslat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PAGE: SETTINGS -->
+            <div class="page-content" id="page-settings" style="display: none;">
+                <div class="tabs">
+                    <button class="tab active" onclick="showSettingsTab('general', this)">Obecne</button>
+                    <button class="tab" onclick="showSettingsTab('company', this)">Firma</button>
+                    <button class="tab" onclick="showSettingsTab('users', this)">Uzivatele</button>
+                    <button class="tab" onclick="showSettingsTab('integrations', this)">Integrace</button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body" id="settingsContent">
+                        <div class="form-group">
+                            <label class="form-label">Jazyk systemu</label>
+                            <select class="form-select">
+                                <option value="cs" selected>Cestina</option>
+                                <option value="en">English</option>
+                                <option value="sk">Slovencina</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Casova zona</label>
+                            <select class="form-select">
+                                <option value="Europe/Prague" selected>Europe/Prague (UTC+1)</option>
+                                <option value="Europe/London">Europe/London (UTC+0)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-checkbox">
+                                <input type="checkbox" checked>
+                                <span class="form-checkbox-box"></span>
+                                <span class="form-checkbox-label">Povolit e-mailove notifikace</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-checkbox">
+                                <input type="checkbox" checked>
+                                <span class="form-checkbox-box"></span>
+                                <span class="form-checkbox-label">Automaticke ukladani rozpracovanych dokumentu</span>
+                            </label>
+                        </div>
+                        <button class="btn btn-primary">Ulozit zmeny</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- MODAL: NEW CUSTOMER -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="modal-title-icon">👤</span>
+                    <span id="customerModalTitle">Novy zakaznik</span>
+                </h2>
+                <button class="modal-close" onclick="closeModal('customerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs" style="margin-bottom: 20px;">
+                    <button class="tab active" onclick="setCustomerType('person', this)">Fyzicka osoba</button>
+                    <button class="tab" onclick="setCustomerType('company', this)">Firma</button>
+                </div>
+                
+                <form id="customerForm">
+                    <input type="hidden" id="customerId" value="">
+                    <input type="hidden" id="customerType" value="person">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Jmeno *</label>
+                            <input type="text" class="form-input" id="customerFirstName" placeholder="Jan" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Prijmeni *</label>
+                            <input type="text" class="form-input" id="customerLastName" placeholder="Novak" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="companyNameGroup" style="display: none;">
+                        <label class="form-label">Nazev firmy</label>
+                        <input type="text" class="form-input" id="customerCompanyName" placeholder="Firma s.r.o.">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">E-mail *</label>
+                            <input type="email" class="form-input" id="customerEmail" placeholder="jan@email.cz" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefon</label>
+                            <input type="tel" class="form-input" id="customerPhone" placeholder="+420 xxx xxx xxx">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row" id="companyIdsGroup" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">IC</label>
+                            <input type="text" class="form-input" id="customerIC" placeholder="12345678">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">DIC</label>
+                            <input type="text" class="form-input" id="customerDIC" placeholder="CZ12345678">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Adresa</label>
+                        <input type="text" class="form-input" id="customerAddress" placeholder="Ulice 123, 100 00 Praha">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="customerStatus">
+                                <option value="active">Aktivni</option>
+                                <option value="premium">Premium</option>
+                                <option value="inactive">Neaktivni</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Preferovany kontakt</label>
+                            <select class="form-select" id="customerPreferredContact">
+                                <option value="email">E-mail</option>
+                                <option value="phone">Telefon</option>
+                                <option value="sms">SMS</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Poznamky</label>
+                        <textarea class="form-textarea" id="customerNotes" placeholder="Interni poznamky k zakaznikovi..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-checkbox">
+                            <input type="checkbox" id="customerHasPortalAccess">
+                            <span class="form-checkbox-box"></span>
+                            <span class="form-checkbox-label">Vytvorit pristup do zakaznickeho portalu (Helpdesk)</span>
+                        </label>
+                        <div class="form-hint">Zakaznik obdrzi e-mail s pristupovymi udaji</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('customerModal')">Zrusit</button>
+                <button class="btn btn-primary" onclick="saveCustomer()">Ulozit zakaznika</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: SELECT CUSTOMER FOR DOCUMENT -->
+    <div class="modal-overlay" id="selectCustomerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="modal-title-icon">📄</span>
+                    Vyberte zakaznika
+                </h2>
+                <button class="modal-close" onclick="closeModal('selectCustomerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Hledat zakaznika..." id="customerSearchInput" oninput="searchCustomersForDocument()">
+                </div>
+                <div id="customerSearchResults" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: IMPORT -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="modal-title-icon">📥</span>
+                    Import zakazniku
+                </h2>
+                <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs" style="margin-bottom: 20px;">
+                    <button class="tab active" onclick="setImportType('csv', this)">CSV</button>
+                    <button class="tab" onclick="setImportType('json', this)">JSON</button>
+                    <button class="tab" onclick="setImportType('paste', this)">Vlozit text</button>
+                </div>
+                
+                <div id="importCsv">
+                    <div class="form-group">
+                        <label class="form-label">Nahrajte CSV soubor</label>
+                        <div style="border: 2px dashed var(--border-color); border-radius: 10px; padding: 40px; text-align: center; cursor: pointer;" onclick="document.getElementById('csvFileInput').click()">
+                            <div style="font-size: 32px; margin-bottom: 10px;">📁</div>
+                            <div style="color: var(--text-secondary);">Kliknete nebo pretahnete soubor</div>
+                            <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleFileImport(this)">
+                        </div>
+                    </div>
+                    <div class="form-hint">
+                        Ocekavany format: jmeno, prijmeni, email, telefon, adresa
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('importModal')">Zrusit</button>
+                <button class="btn btn-primary" onclick="processImport()">Importovat</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script>
+        // ==================== DATA STORE ====================
+        let customers = JSON.parse(localStorage.getItem('ajtak-customers') || '[]');
+        let tickets = JSON.parse(localStorage.getItem('ajtak-tickets') || '[]');
+        let chatMessages = JSON.parse(localStorage.getItem('ajtak-chat') || '{}');
+        let currentDocumentType = '';
+        
+        // Sample data if empty
+        if (customers.length === 0) {
+            customers = [
+                { id: 1, type: 'person', firstName: 'Jan', lastName: 'Novak', email: 'jan.novak@email.cz', phone: '+420 777 123 456', address: 'Prazska 123, 100 00 Praha', status: 'active', invoices: 3, lastActivity: '2024-01-15', hasPortalAccess: true },
+                { id: 2, type: 'company', firstName: 'Petr', lastName: 'Svoboda', companyName: 'TechCorp s.r.o.', email: 'petr@techcorp.cz', phone: '+420 602 987 654', ic: '12345678', dic: 'CZ12345678', address: 'Technicka 456, 160 00 Praha 6', status: 'premium', invoices: 12, lastActivity: '2024-01-14', hasPortalAccess: true },
+                { id: 3, type: 'person', firstName: 'Marie', lastName: 'Dvorakova', email: 'marie.d@gmail.com', phone: '+420 603 555 777', status: 'active', invoices: 1, lastActivity: '2024-01-10' },
+                { id: 4, type: 'company', firstName: 'Karel', lastName: 'Vesely', companyName: 'StartupXY', email: 'karel@startupxy.cz', ic: '87654321', status: 'active', invoices: 5, lastActivity: '2024-01-12', hasPortalAccess: true },
+                { id: 5, type: 'person', firstName: 'Eva', lastName: 'Mala', email: 'eva.mala@seznam.cz', status: 'inactive', invoices: 0, lastActivity: '2023-12-01' }
+            ];
+            saveData();
+        }
+        
+        if (tickets.length === 0) {
+            tickets = [
+                { id: 1001, subject: 'Nefunguje internet', customerId: 1, priority: 'high', status: 'open', created: '2024-01-15 09:30' },
+                { id: 1002, subject: 'Pomala stanice - optimalizace', customerId: 2, priority: 'medium', status: 'in_progress', created: '2024-01-14 14:20' },
+                { id: 1003, subject: 'Nova instalace Office', customerId: 4, priority: 'low', status: 'open', created: '2024-01-13 11:00' },
+                { id: 1004, subject: 'Obnova dat z disku', customerId: 3, priority: 'high', status: 'open', created: '2024-01-15 08:15' },
+                { id: 1005, subject: 'Migrace na M365', customerId: 2, priority: 'medium', status: 'in_progress', created: '2024-01-10 16:45' }
+            ];
+            saveData();
+        }
+        
+        function saveData() {
+            localStorage.setItem('ajtak-customers', JSON.stringify(customers));
+            localStorage.setItem('ajtak-tickets', JSON.stringify(tickets));
+            localStorage.setItem('ajtak-chat', JSON.stringify(chatMessages));
+        }
+        
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDashboard();
+            renderCustomersTable();
+            renderTicketsTable();
+            renderChatList();
+            updateStats();
+        });
+        
+        // ==================== NAVIGATION ====================
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
+            
+            // Show selected page
+            const page = document.getElementById('page-' + pageName);
+            if (page) {
+                page.style.display = 'block';
+            }
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.nav-item[data-page="${pageName}"]`)?.classList.add('active');
+            
+            // Update title
+            const titles = {
+                dashboard: 'Dashboard',
+                customers: 'Zakaznici',
+                tickets: 'Helpdesk',
+                chat: 'Team Chat',
+                settings: 'Nastaveni',
+                reports: 'Reporty'
+            };
+            document.getElementById('pageTitle').textContent = titles[pageName] || pageName;
+        }
+        
+        // Navigation click handlers
+        document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage(this.dataset.page);
+            });
+        });
+        
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        
+        // ==================== DASHBOARD ====================
+        function renderDashboard() {
+            // Recent customers
+            const tbody = document.getElementById('recentCustomersTable');
+            tbody.innerHTML = customers.slice(0, 5).map(c => `
+                <tr>
+                    <td>
+                        <div class="customer-row">
+                            <div class="customer-avatar ${c.type}">${getInitials(c)}</div>
+                            <div class="customer-info">
+                                <h4>${c.companyName || (c.firstName + ' ' + c.lastName)}</h4>
+                                <p>${c.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="status-badge ${c.status}"><span class="status-dot"></span>${getStatusLabel(c.status)}</span></td>
+                    <td>${formatDate(c.lastActivity)}</td>
+                    <td>
+                        <div class="action-menu">
+                            <button class="action-btn">⋮</button>
+                            <div class="action-dropdown">
+                                <div class="action-dropdown-item" onclick="editCustomer(${c.id})">✏️ Upravit</div>
+                                <div class="action-dropdown-item" onclick="createDocumentFor(${c.id}, 'invoice')">📄 Nova faktura</div>
+                                <div class="action-dropdown-item" onclick="createDocumentFor(${c.id}, 'service')">🔧 Novy servis</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Activity feed
+            const activityList = document.getElementById('activityList');
+            activityList.innerHTML = `
+                <li class="activity-item">
+                    <div class="activity-icon green">📄</div>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Nova faktura</strong> vytvorena pro TechCorp s.r.o.</div>
+                        <div class="activity-time">Pred 2 hodinami</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon cyan">🎫</div>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Tiket #1004</strong> byl oznacen jako urgentni</div>
+                        <div class="activity-time">Pred 3 hodinami</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon orange">👤</div>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Novy zakaznik</strong> Karel Vesely byl pridan</div>
+                        <div class="activity-time">Vcera</div>
+                    </div>
+                </li>
+            `;
+        }
+        
+        function updateStats() {
+            document.getElementById('statCustomers').textContent = customers.filter(c => c.status === 'active' || c.status === 'premium').length;
+            document.getElementById('statTickets').textContent = tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length;
+            document.getElementById('statInvoices').textContent = customers.reduce((sum, c) => sum + (c.invoices || 0), 0);
+        }
+        
+        // ==================== CUSTOMERS ====================
+        function renderCustomersTable(filter = 'all') {
+            let filtered = customers;
+            if (filter !== 'all') {
+                filtered = customers.filter(c => c.status === filter);
+            }
+            
+            const tbody = document.getElementById('customersTable');
+            tbody.innerHTML = filtered.map(c => `
+                <tr>
+                    <td>
+                        <div class="customer-row">
+                            <div class="customer-avatar ${c.type}">${getInitials(c)}</div>
+                            <div class="customer-info">
+                                <h4>${c.companyName || (c.firstName + ' ' + c.lastName)}</h4>
+                                <p>${c.type === 'company' ? 'IC: ' + (c.ic || '-') : 'Fyzicka osoba'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>${c.email}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${c.phone || '-'}</div>
+                    </td>
+                    <td>${c.type === 'company' ? 'Firma' : 'Osoba'}</td>
+                    <td><span class="status-badge ${c.status}"><span class="status-dot"></span>${getStatusLabel(c.status)}</span></td>
+                    <td>${c.invoices || 0}</td>
+                    <td>${formatDate(c.lastActivity)}</td>
+                    <td>
+                        <div class="action-menu">
+                            <button class="action-btn">⋮</button>
+                            <div class="action-dropdown">
+                                <div class="action-dropdown-item" onclick="editCustomer(${c.id})">✏️ Upravit</div>
+                                <div class="action-dropdown-item" onclick="viewCustomer(${c.id})">👁️ Detail</div>
+                                <div class="action-dropdown-divider"></div>
+                                <div class="action-dropdown-item" onclick="createDocumentFor(${c.id}, 'invoice')">📄 Nova faktura</div>
+                                <div class="action-dropdown-item" onclick="createDocumentFor(${c.id}, 'service')">🔧 Servisni list</div>
+                                <div class="action-dropdown-item" onclick="createDocumentFor(${c.id}, 'quote')">💰 Cenova nabidka</div>
+                                <div class="action-dropdown-divider"></div>
+                                <div class="action-dropdown-item danger" onclick="deleteCustomer(${c.id})">🗑️ Smazat</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('totalCustomers').textContent = filtered.length;
+        }
+        
+        function filterCustomers(filter, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderCustomersTable(filter);
+        }
+        
+        function openNewCustomerModal() {
+            document.getElementById('customerModalTitle').textContent = 'Novy zakaznik';
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerId').value = '';
+            setCustomerType('person', document.querySelector('.modal-body .tab'));
+            openModal('customerModal');
+        }
+        
+        function editCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            
+            document.getElementById('customerModalTitle').textContent = 'Upravit zakaznika';
+            document.getElementById('customerId').value = customer.id;
+            document.getElementById('customerFirstName').value = customer.firstName || '';
+            document.getElementById('customerLastName').value = customer.lastName || '';
+            document.getElementById('customerEmail').value = customer.email || '';
+            document.getElementById('customerPhone').value = customer.phone || '';
+            document.getElementById('customerAddress').value = customer.address || '';
+            document.getElementById('customerCompanyName').value = customer.companyName || '';
+            document.getElementById('customerIC').value = customer.ic || '';
+            document.getElementById('customerDIC').value = customer.dic || '';
+            document.getElementById('customerStatus').value = customer.status || 'active';
+            document.getElementById('customerNotes').value = customer.notes || '';
+            document.getElementById('customerHasPortalAccess').checked = customer.hasPortalAccess || false;
+            
+            setCustomerType(customer.type, document.querySelector(`.modal-body .tab:${customer.type === 'company' ? 'last-child' : 'first-child'}`));
+            openModal('customerModal');
+        }
+        
+        function saveCustomer() {
+            const id = document.getElementById('customerId').value;
+            const customerData = {
+                type: document.getElementById('customerType').value,
+                firstName: document.getElementById('customerFirstName').value,
+                lastName: document.getElementById('customerLastName').value,
+                email: document.getElementById('customerEmail').value,
+                phone: document.getElementById('customerPhone').value,
+                address: document.getElementById('customerAddress').value,
+                companyName: document.getElementById('customerCompanyName').value,
+                ic: document.getElementById('customerIC').value,
+                dic: document.getElementById('customerDIC').value,
+                status: document.getElementById('customerStatus').value,
+                notes: document.getElementById('customerNotes').value,
+                hasPortalAccess: document.getElementById('customerHasPortalAccess').checked,
+                lastActivity: new Date().toISOString().split('T')[0]
+            };
+            
+            if (id) {
+                // Update
+                const index = customers.findIndex(c => c.id === parseInt(id));
+                if (index !== -1) {
+                    customers[index] = { ...customers[index], ...customerData };
+                    showToast('Zakaznik byl aktualizovan', 'success');
+                }
+            } else {
+                // Create
+                customerData.id = Date.now();
+                customerData.invoices = 0;
+                customers.unshift(customerData);
+                showToast('Zakaznik byl vytvoren', 'success');
+            }
+            
+            saveData();
+            renderCustomersTable();
+            renderDashboard();
+            updateStats();
+            closeModal('customerModal');
+        }
+        
+        function deleteCustomer(id) {
+            if (confirm('Opravdu chcete smazat tohoto zakaznika?')) {
+                customers = customers.filter(c => c.id !== id);
+                saveData();
+                renderCustomersTable();
+                renderDashboard();
+                updateStats();
+                showToast('Zakaznik byl smazan', 'success');
+            }
+        }
+        
+        function setCustomerType(type, btn) {
+            document.getElementById('customerType').value = type;
+            document.querySelectorAll('.modal-body .tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const showCompany = type === 'company';
+            document.getElementById('companyNameGroup').style.display = showCompany ? 'block' : 'none';
+            document.getElementById('companyIdsGroup').style.display = showCompany ? 'grid' : 'none';
+        }
+        
+        // ==================== DOCUMENTS ====================
+        function createDocumentForCustomer(docType) {
+            currentDocumentType = docType;
+            openModal('selectCustomerModal');
+            searchCustomersForDocument();
+        }
+        
+        function searchCustomersForDocument() {
+            const query = document.getElementById('customerSearchInput').value.toLowerCase();
+            const filtered = customers.filter(c => {
+                const name = (c.companyName || c.firstName + ' ' + c.lastName).toLowerCase();
+                return name.includes(query) || c.email.toLowerCase().includes(query);
+            });
+            
+            const container = document.getElementById('customerSearchResults');
+            container.innerHTML = filtered.map(c => `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s;" 
+                     onmouseover="this.style.background='var(--bg-input)'" 
+                     onmouseout="this.style.background='transparent'"
+                     onclick="createDocumentFor(${c.id}, '${currentDocumentType}')">
+                    <div class="customer-avatar ${c.type}">${getInitials(c)}</div>
+                    <div>
+                        <div style="font-weight: 600;">${c.companyName || c.firstName + ' ' + c.lastName}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${c.email}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function createDocumentFor(customerId, docType) {
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            
+            // Build URL with customer data
+            const params = new URLSearchParams({
+                customer: JSON.stringify({
+                    name: customer.companyName || (customer.firstName + ' ' + customer.lastName),
+                    email: customer.email,
+                    phone: customer.phone || '',
+                    address: customer.address || '',
+                    ic: customer.ic || '',
+                    dic: customer.dic || '',
+                    type: customer.type
+                })
+            });
+            
+            const urls = {
+                invoice: '../FAKTURA_VZOR.html',
+                service: '../SERVISNI_LIST_VZOR.html',
+                quote: '../CENOVA_NABIDKA_VZOR.html',
+                protocol: '../PREDAVACI_PROTOKOL_VZOR.html'
+            };
+            
+            const url = urls[docType] + '?' + params.toString();
+            window.open(url, '_blank');
+            
+            closeModal('selectCustomerModal');
+            showToast('Dokument byl otevren v novem okne', 'success');
+        }
+        
+        // ==================== TICKETS ====================
+        function renderTicketsTable() {
+            const tbody = document.getElementById('ticketsTable');
+            tbody.innerHTML = tickets.map(t => {
+                const customer = customers.find(c => c.id === t.customerId);
+                return `
+                <tr>
+                    <td style="font-family: 'JetBrains Mono', monospace; color: var(--cyan);">#${t.id}</td>
+                    <td><strong>${t.subject}</strong></td>
+                    <td>${customer ? (customer.companyName || customer.firstName + ' ' + customer.lastName) : '-'}</td>
+                    <td><span class="status-badge ${t.priority === 'high' ? 'pending' : t.priority === 'low' ? 'inactive' : 'active'}">${getPriorityLabel(t.priority)}</span></td>
+                    <td><span class="status-badge ${t.status === 'open' ? 'pending' : t.status === 'in_progress' ? 'active' : 'inactive'}">${getTicketStatusLabel(t.status)}</span></td>
+                    <td>${t.created}</td>
+                    <td>
+                        <button class="action-btn" onclick="viewTicket(${t.id})">👁️</button>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+        
+        // ==================== CHAT ====================
+        function renderChatList() {
+            const chatList = document.getElementById('chatList');
+            chatList.innerHTML = `
+                <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s;" 
+                     onmouseover="this.style.background='var(--bg-input)'" 
+                     onmouseout="this.style.background='transparent'"
+                     onclick="openChat('team')">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: var(--matrix-green); border-radius: 50%; display: flex; align-items: center; justify-content: center;">👥</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">Team ajtak.it</div>
+                            <div style="font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Posledni zprava...</div>
+                        </div>
+                        <span class="nav-badge">3</span>
+                    </div>
+                </div>
+                <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s;" 
+                     onmouseover="this.style.background='var(--bg-input)'" 
+                     onmouseout="this.style.background='transparent'"
+                     onclick="openChat('vyjezd-01')">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center;">🚗</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">Vyjezd - TechCorp</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Fotky z instalace...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function openChat(chatId) {
+            document.getElementById('chatTitle').innerHTML = `<span class="card-title-icon">💬</span> ${chatId === 'team' ? 'Team ajtak.it' : 'Vyjezd - TechCorp'}`;
+            
+            const messages = chatMessages[chatId] || [];
+            const container = document.getElementById('chatMessages');
+            
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 12px;">JJ</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px;">
+                                <strong>Julius</strong>
+                                <span style="font-size: 11px; color: var(--text-muted);">10:30</span>
+                            </div>
+                            <div style="background: var(--bg-input); padding: 12px; border-radius: 0 12px 12px 12px;">
+                                Ahoj, jak jde ta instalace u TechCorpu?
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-direction: row-reverse;">
+                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 12px; background: var(--cyan);">PK</div>
+                        <div style="flex: 1; text-align: right;">
+                            <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; justify-content: flex-end;">
+                                <span style="font-size: 11px; color: var(--text-muted);">10:35</span>
+                                <strong>Petr</strong>
+                            </div>
+                            <div style="background: var(--matrix-green-subtle); padding: 12px; border-radius: 12px 0 12px 12px; display: inline-block; text-align: left;">
+                                Super, prave dokoncuji kabelaz. Poslu foto.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-direction: row-reverse;">
+                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 12px; background: var(--cyan);">PK</div>
+                        <div style="flex: 1; text-align: right;">
+                            <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; justify-content: flex-end;">
+                                <span style="font-size: 11px; color: var(--text-muted);">10:36</span>
+                                <strong>Petr</strong>
+                            </div>
+                            <div style="background: var(--bg-input); padding: 8px; border-radius: 12px 0 12px 12px; display: inline-block;">
+                                <div style="width: 200px; height: 150px; background: var(--bg-card); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                                    📷 instalace-01.jpg
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = messages.map(m => `<div>${m}</div>`).join('');
+            }
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const container = document.getElementById('chatMessages');
+            const now = new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+            
+            container.innerHTML += `
+                <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-direction: row-reverse;">
+                    <div class="user-avatar" style="width: 36px; height: 36px; font-size: 12px;">JJ</div>
+                    <div style="flex: 1; text-align: right;">
+                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; justify-content: flex-end;">
+                            <span style="font-size: 11px; color: var(--text-muted);">${now}</span>
+                            <strong>Ja</strong>
+                        </div>
+                        <div style="background: var(--matrix-green-subtle); padding: 12px; border-radius: 12px 0 12px 12px; display: inline-block; text-align: left;">
+                            ${message}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function attachFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,.pdf,.doc,.docx';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    showToast('Soubor ' + file.name + ' byl pridan', 'success');
+                }
+            };
+            input.click();
+        }
+        
+        // ==================== IMPORT/EXPORT ====================
+        function importCustomers() {
+            openModal('importModal');
+        }
+        
+        function exportCustomers() {
+            const data = JSON.stringify(customers, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'zakaznici-export-' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Export dokoncen', 'success');
+        }
+        
+        function handleFileImport(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    if (file.name.endsWith('.json')) {
+                        const imported = JSON.parse(e.target.result);
+                        customers = [...customers, ...imported.map(c => ({ ...c, id: Date.now() + Math.random() }))];
+                    } else if (file.name.endsWith('.csv')) {
+                        const lines = e.target.result.split('\n');
+                        lines.slice(1).forEach(line => {
+                            const [firstName, lastName, email, phone, address] = line.split(',').map(s => s.trim());
+                            if (email) {
+                                customers.push({
+                                    id: Date.now() + Math.random(),
+                                    type: 'person',
+                                    firstName,
+                                    lastName,
+                                    email,
+                                    phone,
+                                    address,
+                                    status: 'active',
+                                    invoices: 0,
+                                    lastActivity: new Date().toISOString().split('T')[0]
+                                });
+                            }
+                        });
+                    }
+                    saveData();
+                    renderCustomersTable();
+                    updateStats();
+                    closeModal('importModal');
+                    showToast('Import uspesny', 'success');
+                } catch (err) {
+                    showToast('Chyba pri importu: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // ==================== HELPERS ====================
+        function getInitials(customer) {
+            if (customer.companyName) {
+                return customer.companyName.substring(0, 2).toUpperCase();
+            }
+            return (customer.firstName?.charAt(0) || '') + (customer.lastName?.charAt(0) || '');
+        }
+        
+        function getStatusLabel(status) {
+            const labels = { active: 'Aktivni', premium: 'Premium', inactive: 'Neaktivni', pending: 'Cekajici' };
+            return labels[status] || status;
+        }
+        
+        function getPriorityLabel(priority) {
+            const labels = { high: 'Vysoka', medium: 'Stredni', low: 'Nizka' };
+            return labels[priority] || priority;
+        }
+        
+        function getTicketStatusLabel(status) {
+            const labels = { open: 'Otevreny', in_progress: 'V reseni', closed: 'Uzavreny' };
+            return labels[status] || status;
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('cs-CZ');
+        }
+        
+        // ==================== MODALS ====================
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+        
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+        
+        // ==================== TOAST ====================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // ==================== KEYBOARD SHORTCUTS ====================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('globalSearch').focus();
+            }
+        });
+        
+        // ==================== SEARCH ====================
+        document.getElementById('globalSearch').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 2) return;
+            
+            const results = customers.filter(c => {
+                const name = (c.companyName || c.firstName + ' ' + c.lastName).toLowerCase();
+                return name.includes(query) || c.email.toLowerCase().includes(query);
+            });
+            
+            // Could show dropdown with results
+            console.log('Search results:', results);
+        });
+    </script>
+</body>
+</html>

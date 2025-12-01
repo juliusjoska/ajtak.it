@@ -1,0 +1,71 @@
+{
+  "items": [
+    {
+      "id": "gaming-pc",
+      "title": "Gaming PC Sestava",
+      "description": "Vlastní build s RTX 4070, Ryzen 7",
+      "category": "hardware",
+      "mediaType": "image",
+      "mediaUrl": "media/portfolio/gaming-pc.jpg",
+      "placeholderIcon": "💻",
+      "year": 2024
+    },
+    {
+      "id": "firemni-rack",
+      "title": "Firemní síťový rack",
+      "description": "Ubiquiti UniFi, 10Gbit backbone",
+      "category": "network",
+      "mediaType": "image",
+      "mediaUrl": "media/portfolio/network-rack.jpg",
+      "placeholderIcon": "📡",
+      "year": 2024
+    },
+    {
+      "id": "cctv-prodejna",
+      "title": "Kamerový systém prodejna",
+      "description": "8x IP kamera, NVR, vzdálený přístup",
+      "category": "cctv",
+      "mediaType": "video",
+      "mediaUrl": "media/portfolio/cctv-demo.mp4",
+      "placeholderIcon": "📹",
+      "year": 2024
+    },
+    {
+      "id": "zap-dashboard",
+      "title": "Věrnostní systém ZAP",
+      "description": "Admin dashboard, real-time analytika",
+      "category": "software",
+      "mediaType": "image",
+      "mediaUrl": "media/portfolio/zap-dashboard.jpg",
+      "placeholderIcon": "💻",
+      "year": 2024
+    },
+    {
+      "id": "homelab",
+      "title": "Domácí homelab",
+      "description": "Proxmox cluster, 64GB RAM, NVMe",
+      "category": "hardware",
+      "mediaType": "image",
+      "mediaUrl": "media/portfolio/homelab.jpg",
+      "placeholderIcon": "🖥️",
+      "year": 2023
+    },
+    {
+      "id": "wifi-rd",
+      "title": "WiFi pokrytí RD",
+      "description": "Mesh systém, 3 AP, plné pokrytí",
+      "category": "network",
+      "mediaType": "video",
+      "mediaUrl": "media/portfolio/wifi-mesh.mp4",
+      "placeholderIcon": "📡",
+      "year": 2024
+    }
+  ],
+  "categories": [
+    { "id": "all", "label": "Vše" },
+    { "id": "hardware", "label": "Hardware" },
+    { "id": "network", "label": "Sítě" },
+    { "id": "cctv", "label": "Kamery" },
+    { "id": "software", "label": "Software" }
+  ]
+}

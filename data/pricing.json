@@ -1,0 +1,181 @@
+{
+  "hourlyRates": {
+    "title": "HODINOVÁ_SAZBA",
+    "items": [
+      { "name": "Běžná práce (opravy, instalace)", "price": "850 Kč/h" },
+      { "name": "Sítě, servery, pokročilé", "price": "1 100 Kč/h" },
+      { "name": "Vývoj software", "price": "990 Kč/h" },
+      { "name": "Konzultace, analýza", "price": "1 000 Kč/h" },
+      { "name": "Urgentní zásah (24/7)", "price": "1 800 Kč/h", "highlight": true }
+    ]
+  },
+  "travel": {
+    "title": "VÝJEZDY",
+    "baseLocation": "Příbram",
+    "items": [
+      { "name": "Příbram a okolí (do 15 km)", "price": "ZDARMA", "free": true },
+      { "name": "15-40 km (Praha apod.)", "price": "300 Kč" },
+      { "name": "Celá ČR (nad 40 km)", "price": "9 Kč/km" },
+      { "name": "Vzdálená podpora", "price": "ZDARMA", "free": true }
+    ]
+  },
+  "subscriptions": {
+    "title": "PAUŠÁLY_PRO_FIRMY",
+    "recommended": true,
+    "items": [
+      { "name": "MINI (do 5 zařízení)", "price": "2 990 Kč/měs" },
+      { "name": "STANDARD (do 15 zařízení)", "price": "5 490 Kč/měs" },
+      { "name": "PREMIUM (15+ zařízení)", "price": "od 8 990 Kč/měs", "highlight": true },
+      { "name": "+ Prioritní reakce, slevy na HW", "price": "v ceně", "bonus": true }
+    ]
+  },
+  "services": {
+    "opravy": {
+      "title": "opravy_servis.sh",
+      "cardTitle": "OPRAVY_&_SERVIS",
+      "icon": "🔧",
+      "startingPrice": "600 Kč",
+      "priceLabel": "od",
+      "features": [
+        "Diagnostika PC, notebooku, Mac",
+        "Výměna komponent (RAM, SSD, displej)",
+        "Čištění, repaste, výměna termopassty",
+        "Stavby nových sestav na míru",
+        "Obnova a záchrana dat",
+        "Instalace systému, zrychlení PC"
+      ],
+      "pricing": [
+        { "name": "Diagnostika PC/notebook", "price": "600 Kč" },
+        { "name": "Čištění, výměna termopassty", "price": "750 Kč" },
+        { "name": "Výměna SSD/RAM", "price": "500 Kč + díly" },
+        { "name": "Výměna displeje notebook", "price": "990 Kč + díl" },
+        { "name": "Instalace Windows + software", "price": "990 Kč" },
+        { "name": "Záchrana dat z disku", "price": "od 1 500 Kč" },
+        { "name": "Stavba PC na míru", "price": "1 990 Kč + díly", "highlight": true },
+        { "name": "Vzdálená podpora", "price": "ZDARMA", "free": true }
+      ]
+    },
+    "site": {
+      "title": "site_wifi.sh",
+      "cardTitle": "SÍTĚ_&_WIFI",
+      "icon": "📡",
+      "startingPrice": "990 Kč",
+      "priceLabel": "od",
+      "features": [
+        "Návrh a instalace LAN/WiFi",
+        "Konfigurace routerů, switchů",
+        "Mesh systémy, rozšíření pokrytí",
+        "VPN, vzdálený přístup",
+        "Firemní sítě, segmentace",
+        "Ubiquiti, Mikrotik, enterprise"
+      ],
+      "pricing": [
+        { "name": "Konzultace a návrh sítě", "price": "1 000 Kč/h" },
+        { "name": "Instalace routeru/AP", "price": "600 Kč" },
+        { "name": "Konfigurace mesh systému", "price": "1 500 Kč" },
+        { "name": "Instalace kabeláže (za bod)", "price": "500 Kč" },
+        { "name": "Nastavení VPN", "price": "990 Kč" },
+        { "name": "Firemní síť (komplexní)", "price": "od 8 000 Kč", "highlight": true },
+        { "name": "Mikrotik/Ubiquiti konfigurace", "price": "1 100 Kč/h" }
+      ]
+    },
+    "kamery": {
+      "title": "kamery_cctv.sh",
+      "cardTitle": "KAMERY_&_DOHLED",
+      "icon": "📹",
+      "startingPrice": "1 990 Kč",
+      "priceLabel": "od",
+      "features": [
+        "Návrh kamerového systému",
+        "Instalace IP kamer, NVR",
+        "Přístup z mobilu odkudkoliv",
+        "Nastavení nahrávání, úložiště",
+        "Domácí i firemní řešení",
+        "GDPR poradenství"
+      ],
+      "pricing": [
+        { "name": "Konzultace a návrh", "price": "ZDARMA", "free": true },
+        { "name": "Instalace IP kamery", "price": "990 Kč/ks" },
+        { "name": "Instalace NVR + konfigurace", "price": "1 990 Kč" },
+        { "name": "Nastavení vzdáleného přístupu", "price": "750 Kč" },
+        { "name": "Kompletní systém 4 kamery", "price": "od 12 000 Kč", "highlight": true },
+        { "name": "Kompletní systém 8 kamer", "price": "od 22 000 Kč", "highlight": true },
+        { "name": "GDPR dokumentace", "price": "1 990 Kč" }
+      ]
+    },
+    "firemni": {
+      "title": "firemni_it.sh",
+      "cardTitle": "FIREMNÍ_IT",
+      "icon": "🏢",
+      "startingPrice": "2 990 Kč/měs",
+      "priceLabel": "paušál od",
+      "featured": true,
+      "badge": "OBLÍBENÉ",
+      "features": [
+        "Microsoft 365 administrace",
+        "Azure / Entra ID / Intune",
+        "Správa firemní sítě a zařízení",
+        "Helpdesk a IT podpora",
+        "Zálohovací strategie",
+        "Outsourcing IT na míru"
+      ],
+      "pricing": [
+        { "name": "MINI paušál (do 5 zařízení)", "price": "2 990 Kč/měs", "highlight": true },
+        { "name": "STANDARD (do 15 zařízení)", "price": "5 490 Kč/měs", "highlight": true },
+        { "name": "PREMIUM (15+ zařízení)", "price": "od 8 990 Kč/měs", "highlight": true },
+        { "name": "Microsoft 365 správa", "price": "v paušálu" },
+        { "name": "Azure/Entra ID správa", "price": "v paušálu" },
+        { "name": "Helpdesk podpora", "price": "v paušálu" },
+        { "name": "Jednorázová konzultace", "price": "1 000 Kč/h" }
+      ]
+    },
+    "vyvoj": {
+      "title": "vyvoj_software.sh",
+      "cardTitle": "VÝVOJ_NA_MÍRU",
+      "icon": "💻",
+      "startingPrice": "990 Kč/h",
+      "priceLabel": "hodinová sazba",
+      "features": [
+        "Webové aplikace (React, Node.js)",
+        "Interní firemní systémy",
+        "Věrnostní programy, CRM",
+        "Automatizace procesů",
+        "API integrace",
+        "Správa a hosting"
+      ],
+      "pricing": [
+        { "name": "Hodinová sazba vývoj", "price": "990 Kč/h" },
+        { "name": "Webová aplikace (jednoduchá)", "price": "od 20 000 Kč" },
+        { "name": "Webová aplikace (střední)", "price": "od 50 000 Kč" },
+        { "name": "Komplexní systém na míru", "price": "individuálně", "highlight": true },
+        { "name": "API integrace", "price": "od 8 000 Kč" },
+        { "name": "Hosting & správa", "price": "od 690 Kč/měs" },
+        { "name": "Úpravy existujícího webu", "price": "990 Kč/h" }
+      ]
+    },
+    "bezpecnost": {
+      "title": "bezpecnost.sh",
+      "cardTitle": "BEZPEČNOST",
+      "icon": "🔒",
+      "startingPrice": "1 100 Kč/h",
+      "priceLabel": "od",
+      "features": [
+        "Zabezpečení sítí a zařízení",
+        "Antivirus, firewall, VPN",
+        "Školení kybernetické bezpečnosti",
+        "Bezpečnostní audit",
+        "Phishing simulace",
+        "Incident response"
+      ],
+      "pricing": [
+        { "name": "Bezpečnostní konzultace", "price": "1 100 Kč/h" },
+        { "name": "Bezpečnostní audit (malá firma)", "price": "od 8 000 Kč" },
+        { "name": "Phishing simulace + report", "price": "4 500 Kč" },
+        { "name": "Školení kyb. bezpečnosti", "price": "3 500 Kč/h", "highlight": true },
+        { "name": "Nastavení firewall/VPN", "price": "od 2 000 Kč" },
+        { "name": "Incident response", "price": "1 800 Kč/h" },
+        { "name": "Penetrační test (basic)", "price": "od 15 000 Kč" }
+      ]
+    }
+  }
+}
