@@ -1547,3 +1547,24 @@ class Lightbox {
         this.caption.innerHTML = `<strong>${item.title}</strong><br>${item.desc}`;
     }
 }
+
+/* ============================================
+   Cookie Consent
+   ============================================ */
+(function() {
+    const COOKIE_KEY = 'ajtak_cookie_consent';
+    const banner = document.getElementById('cookieConsent');
+    const acceptBtn = document.getElementById('cookieAccept');
+
+    if (!banner || !acceptBtn) return;
+
+    // Zobrazit banner pouze pokud uživatel ještě nesouhlasil
+    if (!localStorage.getItem(COOKIE_KEY)) {
+        banner.style.display = 'block';
+    }
+
+    acceptBtn.addEventListener('click', function() {
+        localStorage.setItem(COOKIE_KEY, 'accepted');
+        banner.style.display = 'none';
+    });
+})();

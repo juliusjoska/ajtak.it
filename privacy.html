@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zásady ochrany osobních údajů - ajtak.it. Informace o zpracování osobních údajů dle GDPR.">
+    <meta name="robots" content="noindex, follow">
+    <title>Zásady ochrany osobních údajů // ajtak.it</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-green-dim: #00cc33;
+            --matrix-green-glow: rgba(0, 255, 65, 0.4);
+            --matrix-green-subtle: rgba(0, 255, 65, 0.1);
+            --cyan: #00d4ff;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #0d0d0d;
+            --bg-card: rgba(0, 255, 65, 0.03);
+            --text-primary: #00ff41;
+            --text-secondary: rgba(0, 255, 65, 0.7);
+            --text-dim: rgba(0, 255, 65, 0.4);
+            --text-white: #e0e0e0;
+            --border: rgba(0, 255, 65, 0.2);
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-mono);
+            background: var(--bg-primary);
+            color: var(--text-white);
+            line-height: 1.8;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: var(--matrix-green);
+            color: var(--bg-primary);
+        }
+
+        a {
+            color: var(--matrix-green);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--cyan);
+            text-shadow: 0 0 8px var(--matrix-green-glow);
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* Header */
+        .legal-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 32px;
+            margin-bottom: 48px;
+        }
+
+        .legal-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            transition: color 0.3s;
+        }
+
+        .legal-header .back-link:hover {
+            color: var(--matrix-green);
+        }
+
+        .legal-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--matrix-green);
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            text-shadow: 0 0 20px var(--matrix-green-glow);
+        }
+
+        .legal-header .meta {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .legal-header .meta span {
+            color: var(--text-secondary);
+        }
+
+        /* Content */
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--matrix-green);
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-left: 16px;
+            border-left: 3px solid var(--matrix-green);
+        }
+
+        h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--cyan);
+            margin-top: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: var(--text-white);
+        }
+
+        ul, ol {
+            margin-bottom: 14px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            color: var(--text-white);
+        }
+
+        li::marker {
+            color: var(--text-dim);
+        }
+
+        .info-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .info-box p {
+            margin-bottom: 6px;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box .label {
+            color: var(--text-dim);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-box .value {
+            color: var(--matrix-green);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+            color: var(--matrix-green);
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 2px solid var(--border);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.08);
+            color: var(--text-white);
+            vertical-align: top;
+        }
+
+        tr:hover td {
+            background: var(--bg-card);
+        }
+
+        strong {
+            color: var(--matrix-green);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .legal-footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .legal-footer p {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .legal-footer a {
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 24px 16px 60px; }
+            .legal-header h1 { font-size: 22px; }
+            h2 { font-size: 16px; }
+            table { font-size: 12px; }
+            th, td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="legal-header">
+            <a href="/" class="back-link">&larr; zpět na ajtak.it</a>
+            <h1>// Zásady ochrany osobních údajů</h1>
+            <div class="meta">
+                Poslední aktualizace: <span>26. ledna 2026</span> | Verze <span>1.0</span>
+            </div>
+        </header>
+
+        <main>
+            <h2>1. Správce osobních údajů</h2>
+            <div class="info-box">
+                <p><span class="label">Správce</span></p>
+                <p><span class="value">Julius Joska — ajtak.it</span></p>
+                <p>IČO: 24409979</p>
+                <p>Sídlo: Rosovice 98, 262 11</p>
+                <p>E-mail: <a href="mailto:info@ajtak.it">info@ajtak.it</a></p>
+                <p>Web: <a href="https://ajtak.it">https://ajtak.it</a></p>
+            </div>
+            <p>
+                Julius Joska, podnikající fyzická osoba, je správcem vašich osobních údajů
+                ve smyslu Nařízení Evropského parlamentu a Rady (EU) 2016/679 (dále jen „GDPR")
+                a zákona č. 110/2019 Sb., o zpracování osobních údajů.
+            </p>
+
+            <h2>2. Jaké údaje zpracováváme</h2>
+
+            <h3>2.1 Údaje získané automaticky</h3>
+            <p>Při návštěvě webu ajtak.it může docházet ke zpracování následujících údajů:</p>
+            <ul>
+                <li>IP adresa (pro technický provoz a zabezpečení)</li>
+                <li>Typ prohlížeče a operačního systému</li>
+                <li>Datum a čas přístupu</li>
+                <li>Odkazující URL (stránka, ze které jste přišli)</li>
+            </ul>
+            <p>
+                Tyto údaje jsou zpracovávány na základě oprávněného zájmu správce
+                (čl. 6 odst. 1 písm. f) GDPR) pro zajištění bezpečnosti a funkčnosti webových stránek.
+            </p>
+
+            <h3>2.2 Údaje z kontaktního formuláře</h3>
+            <p>Pokud nás kontaktujete prostřednictvím formuláře nebo e-mailu, zpracováváme:</p>
+            <ul>
+                <li>Jméno a příjmení</li>
+                <li>E-mailovou adresu</li>
+                <li>Obsah zprávy</li>
+                <li>Případně další údaje, které nám dobrovolně sdělíte</li>
+            </ul>
+            <p>
+                Právním základem je provedení opatření před uzavřením smlouvy
+                (čl. 6 odst. 1 písm. b) GDPR) a váš souhlas (čl. 6 odst. 1 písm. a) GDPR).
+            </p>
+
+            <h2>3. Účel zpracování</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Účel</th>
+                        <th>Právní základ</th>
+                        <th>Doba uchování</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Technický provoz webu</td>
+                        <td>Oprávněný zájem</td>
+                        <td>Po dobu návštěvy</td>
+                    </tr>
+                    <tr>
+                        <td>Odpověď na dotaz / poptávku</td>
+                        <td>Plnění smlouvy / souhlas</td>
+                        <td>3 roky od posledního kontaktu</td>
+                    </tr>
+                    <tr>
+                        <td>Účetní a daňové účely</td>
+                        <td>Právní povinnost</td>
+                        <td>10 let dle zákona</td>
+                    </tr>
+                    <tr>
+                        <td>Ochrana právních nároků</td>
+                        <td>Oprávněný zájem</td>
+                        <td>Do promlčení nároku (3 roky)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>4. Cookies a sledovací technologie</h2>
+            <p>
+                Web ajtak.it používá pouze technicky nezbytné cookies potřebné pro správné
+                fungování stránek. Nepoužíváme reklamní ani sledovací cookies třetích stran.
+            </p>
+
+            <h3>4.1 Externí služby</h3>
+            <p>Web využívá následující externí služby:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Služba</th>
+                        <th>Poskytovatel</th>
+                        <th>Účel</th>
+                        <th>Více info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Google Fonts</td>
+                        <td>Google LLC, USA</td>
+                        <td>Načítání písma (JetBrains Mono)</td>
+                        <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Zásady Google</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Při načítání písem z Google Fonts dochází k přenosu vaší IP adresy na servery
+                společnosti Google LLC v USA. Přenos je zajištěn na základě standardních
+                smluvních doložek (SCCs) dle čl. 46 odst. 2 písm. c) GDPR.
+            </p>
+
+            <h2>5. Předávání údajů třetím stranám</h2>
+            <p>Vaše osobní údaje nepředáváme třetím stranám s výjimkou:</p>
+            <ul>
+                <li>Poskytovatelů hostingu a IT infrastruktury (zpracovatelé dle smlouvy)</li>
+                <li>Účetního a daňového poradce (právní povinnost)</li>
+                <li>Orgánů veřejné moci na základě zákonné povinnosti</li>
+            </ul>
+            <p>
+                Osobní údaje nejsou předávány do třetí země mimo EU/EHP, s výjimkou
+                výše uvedeného případu (Google Fonts).
+            </p>
+
+            <h2>6. Zabezpečení údajů</h2>
+            <p>
+                K ochraně vašich osobních údajů používáme odpovídající technická
+                a organizační opatření, mimo jiné:
+            </p>
+            <ul>
+                <li>Šifrovaný přenos dat (HTTPS/TLS)</li>
+                <li>Pravidelné aktualizace softwaru a bezpečnostních oprav</li>
+                <li>Omezený přístup k osobním údajům na nezbytné minimum</li>
+                <li>Pravidelné zálohování dat</li>
+            </ul>
+
+            <h2>7. Vaše práva</h2>
+            <p>Jako subjekt údajů máte následující práva:</p>
+            <ul>
+                <li><strong>Právo na přístup</strong> — zjistit, jaké údaje o vás zpracováváme (čl. 15 GDPR)</li>
+                <li><strong>Právo na opravu</strong> — požádat o opravu nepřesných údajů (čl. 16 GDPR)</li>
+                <li><strong>Právo na výmaz</strong> — požádat o smazání údajů, pokud není důvod k dalšímu zpracování (čl. 17 GDPR)</li>
+                <li><strong>Právo na omezení zpracování</strong> — požádat o dočasné omezení zpracování (čl. 18 GDPR)</li>
+                <li><strong>Právo na přenositelnost</strong> — získat údaje ve strojově čitelném formátu (čl. 20 GDPR)</li>
+                <li><strong>Právo vznést námitku</strong> — proti zpracování na základě oprávněného zájmu (čl. 21 GDPR)</li>
+                <li><strong>Právo odvolat souhlas</strong> — kdykoli, bez udání důvodu (čl. 7 odst. 3 GDPR)</li>
+            </ul>
+            <p>
+                Pro uplatnění svých práv nás kontaktujte na
+                <a href="mailto:info@ajtak.it">info@ajtak.it</a>.
+                Na vaši žádost odpovíme nejpozději do 30 dnů.
+            </p>
+            <p>
+                Pokud se domníváte, že zpracování vašich osobních údajů porušuje GDPR,
+                máte právo podat stížnost u dozorového úřadu:
+            </p>
+            <div class="info-box">
+                <p><span class="label">Dozorový úřad</span></p>
+                <p><span class="value">Úřad pro ochranu osobních údajů</span></p>
+                <p>Pplk. Sochora 27, 170 00 Praha 7</p>
+                <p>Web: <a href="https://www.uoou.cz" target="_blank" rel="noopener noreferrer">www.uoou.cz</a></p>
+                <p>E-mail: <a href="mailto:posta@uoou.cz">posta@uoou.cz</a></p>
+            </div>
+
+            <h2>8. Změny zásad</h2>
+            <p>
+                Tyto zásady můžeme průběžně aktualizovat. O všech významných změnách vás
+                budeme informovat prostřednictvím upozornění na webových stránkách.
+                Doporučujeme pravidelně kontrolovat tuto stránku.
+            </p>
+        </main>
+
+        <footer class="legal-footer">
+            <p>&copy; 2026 Julius Joska — ajtak.it | <a href="/">Hlavní stránka</a></p>
+        </footer>
+    </div>
+</body>
+</html>
